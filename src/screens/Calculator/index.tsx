@@ -96,14 +96,22 @@ const Calculator: React.FC = () => {
           </Button>
         </Row>
         <Row>
-          <Button onPress={() => {clearExpression()}}>
-            <ButtonText>clear</ButtonText>
-          </Button>
           <Button onPress={() => {updateExpressions("0")}}>
             <ButtonText>0</ButtonText>
           </Button>
+          <Button onPress={() => {updateExpressions("*")}}>
+            <ButtonText>x</ButtonText>
+          </Button>
+          <Button onPress={() => {updateExpressions("/")}}>
+            <ButtonText>/</ButtonText>
+          </Button>
           <Button onPress={() => {evaluateExpression()}}>
             <ButtonText>=</ButtonText>
+          </Button>
+        </Row>
+        <Row>
+          <Button onPress={() => {clearExpression()}}>
+            <ButtonText>clear</ButtonText>
           </Button>
         </Row>
       </ButtonsContainer>

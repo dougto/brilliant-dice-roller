@@ -70,8 +70,8 @@ export const DiceCounterContainer = styled.View`
   border-radius: 14px;
   height: 28px;
   width: 28px;
-  bottom: -8;
-  right: -8;
+  bottom: -8px;
+  right: -8px;
 `;
 
 export const DiceCounterText = styled.Text`
