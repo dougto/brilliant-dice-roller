@@ -13,31 +13,43 @@ import {
   ButtonText,
 } from "./styles";
 
-const ExpressionsMaxSize = 25;
+const ExpressionMaxSize = 25;
 
 const Calculator: React.FC = () => {
-  const [result, setResult] = useState(0);
+  const [result, setResult] = useState("0");
   const [expression, setExpression] = useState("");
+  const [expressionsError, setExpressionError] = useState(false);
 
   const updateExpressions = useCallback((newCharacter: string) => {
-    if (expression.length < ExpressionsMaxSize) {
+    if (expression.length < ExpressionMaxSize) {
       setExpression(expression + newCharacter);
     }
   }, [expression]);
 
   const clearExpression = useCallback(() => {
     setExpression("");
-    setResult(0);
+    setResult("0");
+    setExpressionError(false);
   }, []);
 
   const evaluateExpression = useCallback(() => {
-    setResult(EvalDiceExpression(expression));
+    let expressionResult = 0;
+
+    try {
+      expressionResult = EvalDiceExpression(expression);
+    } catch (error) {
+      setResult("Syntax Error");
+      setExpressionError(true);
+      return;
+    }
+    setExpressionError(false);
+    setResult(`${expressionResult}`);
   }, [expression]);
 
   return (
     <Container>
-      <ResultText>{result}</ResultText>
-      <ExpressionContainer>
+      <ResultText error={expressionsError}>{result}</ResultText>
+      <ExpressionContainer error={expressionsError}>
         <ExpressionText>{expression}</ExpressionText>
       </ExpressionContainer>
       <ButtonsContainer>
