@@ -10,7 +10,7 @@ export const Container = styled.View`
 `;
 
 export const ResultText = styled.Text`
-  font-size: 80;
+  font-size: 80px;
   color: ${colors.grey};
 `;
 
@@ -22,6 +22,11 @@ export const ExpressionContainer = styled.View`
   width: 80%;
   align-items: center;
   justify-content: center;
+`;
+
+export const ExpressionText = styled.Text`
+  font-size: 20px;
+  color: ${colors.grey};
 `;
 
 export const ButtonsContainer = styled.View`
@@ -47,6 +52,6 @@ export const Button = styled.TouchableOpacity`
 `;
 
 export const ButtonText = styled.Text`
-  font-size: 24;
+  font-size: 24px;
   color: ${colors.white};
 `;

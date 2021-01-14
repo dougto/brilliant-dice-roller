@@ -7,3 +7,7 @@ export const Roll = (quantity: number, dice: number): number => {
 
   return sum;
 };
+
+export const EvalDiceExpression = (expression: string): number => {
+  return 42;
+};

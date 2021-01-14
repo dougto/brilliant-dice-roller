@@ -60,8 +60,8 @@ const Dices: React.FC = () => {
   }, []);
 
   const renderLastResults = useCallback((): string => {
-    return lastResults.length > 5 ?
-      "... + " + lastResults.slice(lastResults.length - 5, lastResults.length).join().replace(/,/g, " + ") :
+    return lastResults.length > 4 ?
+      "... + " + lastResults.slice(lastResults.length - 4, lastResults.length).join().replace(/,/g, " + ") :
       lastResults.join().replace(/,/g, " + ") || "0"
   }, [lastResults]);
 

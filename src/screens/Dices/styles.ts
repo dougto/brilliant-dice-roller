@@ -10,7 +10,7 @@ export const Container = styled.View`
 `;
 
 export const ResultsSumText = styled.Text`
-  font-size: 80;
+  font-size: 80px;
   color: ${colors.grey};
 `;
 
@@ -25,7 +25,7 @@ export const ResultsContainer = styled.View`
 `;
 
 export const ResultsText = styled.Text`
-  font-size: 30;
+  font-size: 30px;
   color: ${colors.grey};
 `;
 
@@ -60,7 +60,7 @@ export const ClearButton = styled.TouchableOpacity`
 `;
 
 export const ClearText = styled.Text`
-  font-size: 30;
+  font-size: 30px;
   color: ${colors.grey};
 `;
 
@@ -75,7 +75,7 @@ export const DiceCounterContainer = styled.View`
 `;
 
 export const DiceCounterText = styled.Text`
-  font-size: 18;
+  font-size: 18px;
   font-weight: bold;
   color: ${colors.white};
   margin: auto;
