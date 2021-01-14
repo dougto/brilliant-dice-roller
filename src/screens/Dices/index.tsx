@@ -1,0 +1,132 @@
+import React, { useState, useCallback } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { Roll } from "../../helpers/Math";
+
+import {
+  Container,
+  ResultsText,
+  ResultsSumText,
+  ResultsContainer,
+  DicesContainer,
+  Row,
+  DiceContainer,
+  ClearButton,
+  ClearText,
+  DiceCounterContainer,
+  DiceCounterText
+} from "./styles";
+
+type Dice = "d2" | "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d100";
+
+interface IDiceCounter {
+  d2: number;
+  d4: number;
+  d6: number;
+  d8: number;
+  d10: number;
+  d12: number;
+  d20: number;
+  d100: number;
+}
+
+const Dices: React.FC = () => {
+  const [resultsSum, setResultsSum] = useState(0);
+  const [lastResults, setLastResults] = useState<number[]>([]);
+  const [diceCounter, setDiceCounter] = useState<IDiceCounter>({
+    d2: 0, d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0
+  });
+
+  const rollDice = useCallback((dice: number) => {
+    const currentDice = `d${dice}` as Dice;
+    diceCounter[currentDice] = diceCounter[currentDice] + 1;
+
+    const rollResult = Roll(1, dice);
+    const newSum = resultsSum + rollResult;
+    setResultsSum(newSum);
+    setLastResults([...lastResults, rollResult])
+    setDiceCounter({ ...diceCounter })
+  }, [resultsSum, lastResults]);
+
+  const clearResults = useCallback(() => {
+    setResultsSum(0);
+    setLastResults([]);
+    setDiceCounter({
+      d2: 0, d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0
+    });
+  }, []);
+
+  const renderLastResults = useCallback((): string => {
+    return lastResults.length > 5 ?
+      "... + " + lastResults.slice(lastResults.length - 5, lastResults.length).join().replace(/,/g, " + ") :
+      lastResults.join().replace(/,/g, " + ") || "0"
+  }, [lastResults]);
+
+  const renderDiceCounter = useCallback((counter: Dice) => {
+    const count = diceCounter[counter];
+
+    if (count > 0) {
+      return (
+        <DiceCounterContainer>
+          <DiceCounterText>{count}</DiceCounterText>
+        </DiceCounterContainer>
+      );
+    }
+
+    return null;
+  }, [diceCounter]);
+
+  return (
+    <Container>
+      <ResultsSumText>{resultsSum}</ResultsSumText>
+      <ResultsContainer>
+        <ResultsText>{renderLastResults()}</ResultsText>
+      </ResultsContainer>
+      <DicesContainer>
+        <Row>
+          <DiceContainer onPress={() => { rollDice(2) }}>
+            <MaterialCommunityIcons size={72} name="numeric-2-circle" color={"#777"} />
+            {renderDiceCounter("d2")}
+          </DiceContainer>
+          <DiceContainer onPress={() => { rollDice(4) }}>
+            <MaterialCommunityIcons size={72} name="dice-d4" color={"#777"} />
+            {renderDiceCounter("d4")}
+          </DiceContainer>
+        </Row>
+        <Row>
+          <DiceContainer onPress={() => { rollDice(6) }}>
+            <MaterialCommunityIcons size={72} name="dice-6" color={"#777"} />
+            {renderDiceCounter("d6")}
+          </DiceContainer>
+          <DiceContainer onPress={() => { rollDice(8) }}>
+            <MaterialCommunityIcons size={72} name="dice-d8" color={"#777"} />
+            {renderDiceCounter("d8")}
+          </DiceContainer>
+          <DiceContainer onPress={() => { rollDice(10) }}>
+            <MaterialCommunityIcons size={72} name="dice-d10" color={"#777"} />
+            {renderDiceCounter("d10")}
+          </DiceContainer>
+        </Row>
+        <Row>
+          <DiceContainer onPress={() => { rollDice(12) }}>
+            <MaterialCommunityIcons size={72} name="dice-d12" color={"#777"} />
+            {renderDiceCounter("d12")}
+          </DiceContainer>
+          <DiceContainer onPress={() => { rollDice(20) }}>
+            <MaterialCommunityIcons size={72} name="dice-d20" color={"#777"} />
+            {renderDiceCounter("d20")}
+          </DiceContainer>
+          <DiceContainer onPress={() => { rollDice(100) }}>
+            <MaterialCommunityIcons size={72} name="percent" color={"#777"} />
+            {renderDiceCounter("d100")}
+          </DiceContainer>
+        </Row>
+        <ClearButton onPress={() => { clearResults() }}>
+          <ClearText>Clear</ClearText>
+        </ClearButton>
+      </DicesContainer>
+    </Container>
+  );
+}
+
+export default Dices;
