@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useMediaQuery } from "react-responsive";
 
 import { EvalDiceExpression } from "../../helpers/Math";
 
@@ -46,10 +47,14 @@ const Calculator: React.FC = () => {
     setResult(`${expressionResult}`);
   }, [expression]);
 
+  const isSmallDevice = useMediaQuery({
+    maxDeviceHeight: 700,
+  });
+
   return (
     <Container>
-      <ResultText error={expressionsError}>{result}</ResultText>
-      <ExpressionContainer error={expressionsError}>
+      <ResultText small={isSmallDevice} error={expressionsError}>{result}</ResultText>
+      <ExpressionContainer small={isSmallDevice} error={expressionsError}>
         <ExpressionText>{expression}</ExpressionText>
       </ExpressionContainer>
       <ButtonsContainer>

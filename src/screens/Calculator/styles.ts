@@ -3,10 +3,12 @@ import colors from "../../constants/Colors";
 
 interface IExpressionContainerProps {
   error: boolean;
+  small: boolean;
 }
 
 interface IResultTextProps {
   error: boolean;
+  small: boolean;
 }
 
 export const Container = styled.View`
@@ -18,13 +20,13 @@ export const Container = styled.View`
 `;
 
 export const ResultText = styled.Text<IResultTextProps>`
-  font-size: ${(props) => (props.error ? "50px" : "80px")};
-  margin-bottom: ${(props) => (props.error ? "30px" : "0px")};
+  font-size: ${(props) => (props.error || props.small ? 50 : 80)}px;
+  margin-bottom: ${(props) => (props.error ? 30 : 0)}px;
   color: ${(props) => (props.error ? colors.red : colors.grey)};
 `;
 
 export const ExpressionContainer = styled.View<IExpressionContainerProps>`
-  margin-top: 48px;
+  margin-top: ${(props) => (props.small ? 32 : 48)}px;
   border: 2px solid ${(props) => (props.error ? colors.red : colors.grey)};
   border-radius: 20px;
   height: 48px;

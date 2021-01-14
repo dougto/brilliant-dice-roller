@@ -1,24 +1,18 @@
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+
+import {
+  Container,
+  BigText,
+} from './styles';
 
 const Characters: React.FC = () => {
+  const [characters, setCharacters] = useState({});
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Characters</Text>
-    </View>
+    <Container>
+      <BigText>Characters</BigText>
+    </Container>
   );
 }
 
 export default Characters;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-});

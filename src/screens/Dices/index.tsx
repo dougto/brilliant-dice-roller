@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMediaQuery } from "react-responsive";
 
 import { Roll } from "../../helpers/Math";
 import colors from "../../constants/Colors";
@@ -79,53 +80,59 @@ const Dices: React.FC = () => {
     return null;
   }, [diceCounter]);
 
+  const isSmallDevice = useMediaQuery({
+    maxDeviceHeight: 700,
+  });
+
+  const iconSize = useMemo(() => isSmallDevice ? 50 : 72, [isSmallDevice])
+
   return (
     <Container>
-      <ResultsSumText>{resultsSum}</ResultsSumText>
-      <ResultsContainer>
+      <ResultsSumText small={isSmallDevice}>{resultsSum}</ResultsSumText>
+      <ResultsContainer small={isSmallDevice}>
         <ResultsText>{renderLastResults()}</ResultsText>
       </ResultsContainer>
       <DicesContainer>
         <Row>
           <DiceContainer onPress={() => { rollDice(2) }}>
-            <MaterialCommunityIcons size={72} name="numeric-2-circle" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="numeric-2-circle" color={colors.grey} />
             {renderDiceCounter("d2")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(4) }}>
-            <MaterialCommunityIcons size={72} name="dice-d4" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-d4" color={colors.grey} />
             {renderDiceCounter("d4")}
           </DiceContainer>
         </Row>
         <Row>
           <DiceContainer onPress={() => { rollDice(6) }}>
-            <MaterialCommunityIcons size={72} name="dice-6" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-6" color={colors.grey} />
             {renderDiceCounter("d6")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(8) }}>
-            <MaterialCommunityIcons size={72} name="dice-d8" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-d8" color={colors.grey} />
             {renderDiceCounter("d8")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(10) }}>
-            <MaterialCommunityIcons size={72} name="dice-d10" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-d10" color={colors.grey} />
             {renderDiceCounter("d10")}
           </DiceContainer>
         </Row>
         <Row>
           <DiceContainer onPress={() => { rollDice(12) }}>
-            <MaterialCommunityIcons size={72} name="dice-d12" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-d12" color={colors.grey} />
             {renderDiceCounter("d12")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(20) }}>
-            <MaterialCommunityIcons size={72} name="dice-d20" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="dice-d20" color={colors.grey} />
             {renderDiceCounter("d20")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(100) }}>
-            <MaterialCommunityIcons size={72} name="percent" color={colors.grey} />
+            <MaterialCommunityIcons size={iconSize} name="percent" color={colors.grey} />
             {renderDiceCounter("d100")}
           </DiceContainer>
         </Row>
-        <ClearButton onPress={() => { clearResults() }}>
-          <ClearText>Clear</ClearText>
+        <ClearButton small={isSmallDevice} onPress={() => { clearResults() }}>
+          <ClearText small={isSmallDevice}>Clear</ClearText>
         </ClearButton>
       </DicesContainer>
     </Container>

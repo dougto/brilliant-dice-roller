@@ -1,6 +1,10 @@
 import styled from "styled-components/native";
 import colors from "../../constants/Colors";
 
+interface IMediaSize {
+  small: boolean;
+}
+
 export const Container = styled.View`
   display: flex;
   flex-direction: column;
@@ -9,13 +13,13 @@ export const Container = styled.View`
   justify-content: center;
 `;
 
-export const ResultsSumText = styled.Text`
-  font-size: 80px;
+export const ResultsSumText = styled.Text<IMediaSize>`
+  font-size: ${(props) => (props.small ? 60 : 80)}px;
   color: ${colors.grey};
 `;
 
-export const ResultsContainer = styled.View`
-  margin-top: 48px;
+export const ResultsContainer = styled.View<IMediaSize>`
+  margin-top: ${(props) => (props.small ? 32 : 48)}px;
   border: 2px solid ${colors.grey};
   border-radius: 20px;
   height: 48px;
@@ -49,18 +53,18 @@ export const DiceContainer = styled.TouchableOpacity`
   position: relative;
 `;
 
-export const ClearButton = styled.TouchableOpacity`
+export const ClearButton = styled.TouchableOpacity<IMediaSize>`
   border: 2px solid ${colors.grey};
   border-radius: 20px;
-  height: 48px;
+  height: ${(props) => (props.small ? 36 : 48)}px;
   width: 60%;
   align-items: center;
   justify-content: center;
-  margin-top: 48px;
+  margin-top: ${(props) => (props.small ? 24 : 48)}px;
 `;
 
-export const ClearText = styled.Text`
-  font-size: 30px;
+export const ClearText = styled.Text<IMediaSize>`
+  font-size: ${(props) => (props.small ? 20 : 30)}px;
   color: ${colors.grey};
 `;
 
