@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Roll } from "../../helpers/Math";
+import colors from "../../constants/Colors";
 
 import {
   Container,
@@ -85,39 +86,39 @@ const Dices: React.FC = () => {
       <DicesContainer>
         <Row>
           <DiceContainer onPress={() => { rollDice(2) }}>
-            <MaterialCommunityIcons size={72} name="numeric-2-circle" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="numeric-2-circle" color={colors.grey} />
             {renderDiceCounter("d2")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(4) }}>
-            <MaterialCommunityIcons size={72} name="dice-d4" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-d4" color={colors.grey} />
             {renderDiceCounter("d4")}
           </DiceContainer>
         </Row>
         <Row>
           <DiceContainer onPress={() => { rollDice(6) }}>
-            <MaterialCommunityIcons size={72} name="dice-6" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-6" color={colors.grey} />
             {renderDiceCounter("d6")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(8) }}>
-            <MaterialCommunityIcons size={72} name="dice-d8" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-d8" color={colors.grey} />
             {renderDiceCounter("d8")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(10) }}>
-            <MaterialCommunityIcons size={72} name="dice-d10" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-d10" color={colors.grey} />
             {renderDiceCounter("d10")}
           </DiceContainer>
         </Row>
         <Row>
           <DiceContainer onPress={() => { rollDice(12) }}>
-            <MaterialCommunityIcons size={72} name="dice-d12" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-d12" color={colors.grey} />
             {renderDiceCounter("d12")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(20) }}>
-            <MaterialCommunityIcons size={72} name="dice-d20" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="dice-d20" color={colors.grey} />
             {renderDiceCounter("d20")}
           </DiceContainer>
           <DiceContainer onPress={() => { rollDice(100) }}>
-            <MaterialCommunityIcons size={72} name="percent" color={"#777"} />
+            <MaterialCommunityIcons size={72} name="percent" color={colors.grey} />
             {renderDiceCounter("d100")}
           </DiceContainer>
         </Row>

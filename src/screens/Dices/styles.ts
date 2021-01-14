@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import colors from "../../constants/Colors";
 
 export const Container = styled.View`
   display: flex;
@@ -10,12 +11,12 @@ export const Container = styled.View`
 
 export const ResultsSumText = styled.Text`
   font-size: 80;
-  color: #777;
+  color: ${colors.grey};
 `;
 
 export const ResultsContainer = styled.View`
   margin-top: 48px;
-  border: 2px solid #777;
+  border: 2px solid ${colors.grey};
   border-radius: 20px;
   height: 48px;
   width: 80%;
@@ -25,7 +26,7 @@ export const ResultsContainer = styled.View`
 
 export const ResultsText = styled.Text`
   font-size: 30;
-  color: #777;
+  color: ${colors.grey};
 `;
 
 export const DicesContainer = styled.View`
@@ -49,7 +50,7 @@ export const DiceContainer = styled.TouchableOpacity`
 `;
 
 export const ClearButton = styled.TouchableOpacity`
-  border: 2px solid #777;
+  border: 2px solid ${colors.grey};
   border-radius: 20px;
   height: 48px;
   width: 60%;
@@ -60,12 +61,12 @@ export const ClearButton = styled.TouchableOpacity`
 
 export const ClearText = styled.Text`
   font-size: 30;
-  color: #777;
+  color: ${colors.grey};
 `;
 
 export const DiceCounterContainer = styled.View`
   position: absolute;
-  background-color: #3366ff;
+  background-color: ${colors.blue};
   border-radius: 14px;
   height: 28px;
   width: 28px;
@@ -76,6 +77,6 @@ export const DiceCounterContainer = styled.View`
 export const DiceCounterText = styled.Text`
   font-size: 18;
   font-weight: bold;
-  color: #fff;
+  color: ${colors.white};
   margin: auto;
 `;
