@@ -18,6 +18,8 @@ import {
   DiceCounterText
 } from "./styles";
 
+type DiceNumbers = 2 | 4 | 6 | 8 | 10 | 12 | 20 | 100;
+
 type Dice = "d2" | "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d100";
 
 interface IDiceCounter {
@@ -38,7 +40,7 @@ const Dices: React.FC = () => {
     d2: 0, d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0
   });
 
-  const rollDice = useCallback((dice: number) => {
+  const rollDice = useCallback((dice: DiceNumbers) => {
     const currentDice = `d${dice}` as Dice;
     diceCounter[currentDice] = diceCounter[currentDice] + 1;
 
