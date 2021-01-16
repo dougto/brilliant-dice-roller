@@ -2,7 +2,13 @@ export const Roll = (quantity: number, dice: number): number => {
   let sum = 0;
 
   for (let i = 0; i < quantity; i++) {
-    sum += Math.ceil(Math.random() * dice);
+    let randomNumber = Math.random();
+
+    if (randomNumber == 0) {
+      randomNumber = Math.min();
+    }
+
+    sum += Math.ceil(randomNumber * dice);
   }
 
   return sum;
