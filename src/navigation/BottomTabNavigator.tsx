@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import Dices from '../screens/Dices';
 import Calculator from '../screens/Calculator';
-import Characters from '../screens/Characters';
+import CharactersNavigation from './CharactersNavigator';
 import History from '../screens/History';
 
 type BottomTabParamList = {
@@ -35,7 +35,7 @@ export default function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Characters"
-        component={Characters}
+        component={CharactersNavigation}
         options={{
           tabBarIcon: ({ color }) => <MaterialCommunityIcons size={30} name="account" color={color} />,
         }}
