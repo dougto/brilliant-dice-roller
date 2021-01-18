@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import colors from "../../constants/Colors";
 import {
@@ -32,24 +33,41 @@ export interface ICharacter {
 }
 
 const Characters: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [characters, setCharacters] = useState<ICharacter[]>([]);
   const [newCharacterName, setNewCharacterName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigation = useNavigation();
 
-  const handleAddCharacter = useCallback(() => {
+  useEffect(() => {
+    async function loadCharacters() {
+      const storedCharacters = await AsyncStorage.getItem('@bdr:characters');
+      setLoading(false);
+      if (!storedCharacters) return;
+      setCharacters(JSON.parse(storedCharacters) as ICharacter[])
+    }
+
+    loadCharacters();
+  }, [loading]);
+
+  const handleAddCharacter = useCallback(async () => {
     const newCharacter: ICharacter = {
       name: newCharacterName,
       rolls: [],
     };
 
-    setCharacters([...characters, newCharacter]);
+    AsyncStorage.setItem('@bdr:characters', JSON.stringify([...characters, newCharacter]));
 
+    setCharacters([...characters, newCharacter]);
     setIsModalOpen(false);
   }, [newCharacterName, characters]);
 
   const renderCharacters = useCallback(() => {
+    if (loading) {
+      return <ActivityIndicator/>;
+    }
+
     if (characters.length > 0) {
       return characters.map((character) => (
         <CharacterContainer key={character.name}>
@@ -62,7 +80,7 @@ const Characters: React.FC = () => {
       ))
     }
     return (<NoCharactersText>No Characters saved yet :(</NoCharactersText>)
-  }, [characters]);
+  }, [characters, loading]);
 
   const renderAddCharacterModal = useCallback(() => (
     <Backdrop>
@@ -76,6 +94,8 @@ const Characters: React.FC = () => {
         <ModalInput
           onChangeText={(value) => setNewCharacterName(value) }
           placeholder="Name"
+          autoCapitalize="none"
+          autoCompleteType="off"
         />
         <ModalButton onPress={handleAddCharacter}>
           <ModalButtonText>Add Character</ModalButtonText>
