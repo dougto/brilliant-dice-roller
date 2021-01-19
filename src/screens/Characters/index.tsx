@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import colors from "../../constants/Colors";
@@ -40,6 +40,8 @@ const Characters: React.FC = () => {
 
   const navigation = useNavigation();
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     async function loadCharacters() {
       const storedCharacters = await AsyncStorage.getItem('@bdr:characters');
@@ -49,15 +51,20 @@ const Characters: React.FC = () => {
     }
 
     loadCharacters();
-  }, [loading]);
+  }, [isFocused]);
 
   const handleAddCharacter = useCallback(async () => {
+    if (characters.find(char => char.name === newCharacterName)) {
+      Alert.alert('Character already exists!');
+      return;
+    }
+
     const newCharacter: ICharacter = {
       name: newCharacterName,
       rolls: [],
     };
 
-    AsyncStorage.setItem('@bdr:characters', JSON.stringify([...characters, newCharacter]));
+    await AsyncStorage.setItem('@bdr:characters', JSON.stringify([...characters, newCharacter]));
 
     setCharacters([...characters, newCharacter]);
     setIsModalOpen(false);
@@ -71,7 +78,7 @@ const Characters: React.FC = () => {
     if (characters.length > 0) {
       return characters.map((character) => (
         <CharacterContainer key={character.name}>
-          <TouchableContainer onPress={() => { navigation.navigate('Character') }}>
+          <TouchableContainer onPress={() => { navigation.navigate('Character', {character}) }}>
             <CharacterName>{character.name}</CharacterName>
             <MaterialCommunityIcons size={30} name="chevron-right" color={colors.grey} />
           </TouchableContainer>
@@ -87,7 +94,11 @@ const Characters: React.FC = () => {
       <ModalContainer>
         <ModalRow>
           <ModalText>Insert character name:</ModalText>
-          <TouchableOpacity onPress={() => { setIsModalOpen(false) }}>
+          <TouchableOpacity
+            onPress={() => {
+              setNewCharacterName('');
+              setIsModalOpen(false);
+            }}>
             <MaterialCommunityIcons size={30} name="close" color={colors.grey}/>
           </TouchableOpacity>
         </ModalRow>
@@ -96,6 +107,7 @@ const Characters: React.FC = () => {
           placeholder="Name"
           autoCapitalize="none"
           autoCompleteType="off"
+          autoCorrect={false}
         />
         <ModalButton onPress={handleAddCharacter}>
           <ModalButtonText>Add Character</ModalButtonText>

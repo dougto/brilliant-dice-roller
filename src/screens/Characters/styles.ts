@@ -68,6 +68,7 @@ export const ModalContainer = styled.View`
   z-index: 2;
   width: 80%;
   padding: 20px;
+  border-radius: 4px;
 `;
 
 export const ModalText = styled.Text`
@@ -91,7 +92,7 @@ export const ModalButton = styled.TouchableOpacity`
   background-color: ${colors.blue};
   border-radius: 8px;
   padding: 8px;
-  width: 40%;
+  max-width: 40%;
 `;
 
 export const ModalButtonText = styled.Text`
@@ -103,4 +104,55 @@ export const NoCharactersText = styled.Text`
   font-weight: bold;
   color: ${colors.grey};
   margin: 80px;
+`;
+
+export const CharacterScreenContainer = styled.View`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 50px;
+`;
+
+export const CharacterHeaderContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: 30px;
+`;
+
+export const DeleteButton = styled.TouchableOpacity`
+  background-color: ${colors.red};
+  height: 48px;
+  width: 48px;
+  border-radius: 24px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const AddRollText = styled.Text`
+  color: ${colors.white};
+  font-size: 24px;
+`;
+
+export const AddRollButton = styled.TouchableOpacity`
+  position: absolute;
+  height: 64px;
+  border-radius: 32px;
+  bottom: 16px;
+  right: 16px;
+  background-color: ${colors.blue};
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px 0 16px;
+`;
+
+export const ModalDoubleButtonsContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin: 30px;
 `;
