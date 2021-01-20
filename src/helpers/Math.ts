@@ -19,7 +19,7 @@ export const EvalDiceExpression = (expression: string): number => {
     return 0;
   }
 
-  const expressionComponents = expression.split(/(\+|-)/g);
+  const expressionComponents = expression.split(/(\+|-|\*|\/)/g);
 
   const expressionWithoutDices = expressionComponents.map(
     (component: string) => {

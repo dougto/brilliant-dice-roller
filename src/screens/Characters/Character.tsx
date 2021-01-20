@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -118,27 +118,30 @@ const Character: React.FC = () => {
   const renderRolls = useCallback(() => {
     if (currentCharacter.rolls.length > 0) {
       return (
-        <ScrollView style={{ width: '100%' }}>
-          {currentCharacter.rolls.map(roll => (
-            <RollOutsideContainer key={roll.name}>
-              <RollContainer>
-                <SmallDeleteButton onPress={() => { handleRollDeletion(roll.name) }}>
-                  <MaterialCommunityIcons size={20} name="trash-can-outline" color={colors.white} />
-                </SmallDeleteButton>
-                <RollContentContainer>
-                  <RollContentColumn>
-                    <RollName>{roll.name}</RollName>
-                    <RollExpression>{roll.expression}</RollExpression>
-                  </RollContentColumn>
-                  <RollButton>
-                    <RollButtonText onPress={() => { handleRoll(roll.expression) }}>Roll</RollButtonText>
-                  </RollButton>
-                </RollContentContainer>
-              </RollContainer>
-              <RollBottomLine/>
-            </RollOutsideContainer>
-          ))}
-        </ScrollView>
+        <>
+          <ScrollView style={{ width: '100%' }}>
+            {currentCharacter.rolls.map(roll => (
+              <RollOutsideContainer key={roll.name}>
+                <RollContainer>
+                  <SmallDeleteButton onPress={() => { handleRollDeletion(roll.name) }}>
+                    <MaterialCommunityIcons size={20} name="trash-can-outline" color={colors.white} />
+                  </SmallDeleteButton>
+                  <RollContentContainer>
+                    <RollContentColumn>
+                      <RollName>{roll.name}</RollName>
+                      <RollExpression>{roll.expression}</RollExpression>
+                    </RollContentColumn>
+                    <RollButton>
+                      <RollButtonText onPress={() => { handleRoll(roll.expression) }}>Roll</RollButtonText>
+                    </RollButton>
+                  </RollContentContainer>
+                </RollContainer>
+                <RollBottomLine/>
+              </RollOutsideContainer>
+            ))}
+          </ScrollView>
+          <View style={{ marginBottom: 40 }}/>
+        </>
       );
     }
 
