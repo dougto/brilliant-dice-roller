@@ -156,3 +156,73 @@ export const ModalDoubleButtonsContainer = styled.View`
   justify-content: space-around;
   margin: 30px;
 `;
+
+export const RollContainer = styled.View`
+  flex-direction: row;
+  padding: 20px;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const SmallDeleteButton = styled.TouchableOpacity`
+  background-color: ${colors.red};
+  height: 32px;
+  width: 32px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RollContentContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin: 20px;
+`;
+
+export const RollContentColumn = styled.View`
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+`;
+
+export const RollName = styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+  color: ${colors.grey};
+  margin-bottom: 8px;
+`;
+
+export const RollExpression = styled.Text`
+  font-size: 16px;
+  color: ${colors.grey};
+`;
+
+export const RollButton = styled.TouchableOpacity`
+  background-color: ${colors.blue};
+  border-radius: 8px;
+  padding: 8px;
+`;
+
+export const RollButtonText = styled.Text`
+  color: ${colors.white};
+`;
+
+export const RollBottomLine = styled.View`
+  border: 1px solid ${colors.lightGrey};
+  border-radius: 2px;
+  height: 1px;
+  width: 85%;
+`;
+
+export const RollOutsideContainer = styled.View`
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+`;
+
+export const RollResult = styled.Text`
+  font-size: 60px;
+  color: ${colors.grey};
+`;

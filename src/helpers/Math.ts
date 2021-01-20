@@ -30,6 +30,13 @@ export const EvalDiceExpression = (expression: string): number => {
 
         const [quantity, dice] = component.split("d");
 
+        if (
+          !Number.isInteger(parseInt(quantity)) ||
+          !Number.isInteger(parseInt(dice))
+        ) {
+          throw new Error("invalid expression");
+        }
+
         return `${Roll(parseInt(quantity), parseInt(dice))}`;
       }
 
