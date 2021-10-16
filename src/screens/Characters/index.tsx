@@ -86,7 +86,7 @@ const Characters: React.FC = () => {
         </CharacterContainer>
       ))
     }
-    return (<NoCharactersText>No Characters saved yet :(</NoCharactersText>)
+    return (<NoCharactersText>No characters created yet. Press the plus button to create a character.</NoCharactersText>)
   }, [characters, loading]);
 
   const renderAddCharacterModal = useCallback(() => (

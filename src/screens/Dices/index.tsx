@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMediaQuery } from "react-responsive";
 
+import { useHistory } from '../../hooks/History';
 import { Roll } from "../../helpers/Math";
 import colors from "../../constants/Colors";
 
@@ -35,6 +36,8 @@ interface IDiceCounter {
 }
 
 const Dices: React.FC = () => {
+  const { addHistoryItem } = useHistory();
+
   const [resultsSum, setResultsSum] = useState(0);
   const [lastResults, setLastResults] = useState<number[]>([]);
   const [diceCounter, setDiceCounter] = useState<IDiceCounter>({
@@ -50,6 +53,12 @@ const Dices: React.FC = () => {
     setResultsSum(newSum);
     setLastResults([...lastResults, rollResult])
     setDiceCounter({ ...diceCounter })
+
+    addHistoryItem({
+      expression: `1d${dice}`,
+      name: 'Dices Screen',
+      result: `${rollResult}`,
+    });
   }, [resultsSum, lastResults]);
 
   const clearResults = useCallback(() => {

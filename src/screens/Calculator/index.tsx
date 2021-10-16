@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { EvalDiceExpression } from '../../helpers/Math';
-
+import { useHistory } from '../../hooks/History';
 import {
   Container,
   ResultText,
@@ -17,6 +17,8 @@ import {
 const ExpressionMaxSize = 25;
 
 const Calculator: React.FC = () => {
+  const { addHistoryItem } = useHistory();
+
   const [result, setResult] = useState('0');
   const [expression, setExpression] = useState('');
   const [expressionsError, setExpressionError] = useState(false);
@@ -49,6 +51,12 @@ const Calculator: React.FC = () => {
     }
     setExpressionError(false);
     setResult(`${expressionResult}`);
+
+    addHistoryItem({
+      expression,
+      name: 'Calculator',
+      result: `${expressionResult}`,
+    });
   }, [expression]);
 
   const isSmallDevice = useMediaQuery({
