@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMediaQuery } from "react-responsive";
 
+import { useHistory } from '../../hooks/History';
 import { Roll } from "../../helpers/Math";
 import colors from "../../constants/Colors";
 
@@ -35,13 +36,15 @@ interface IDiceCounter {
 }
 
 const Dices: React.FC = () => {
+  const { addHistoryItem } = useHistory();
+
   const [resultsSum, setResultsSum] = useState(0);
   const [lastResults, setLastResults] = useState<number[]>([]);
   const [diceCounter, setDiceCounter] = useState<IDiceCounter>({
     d2: 0, d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0
   });
 
-  const rollDice = useCallback((dice: DiceNumbers) => {
+  const rollDice = (dice: DiceNumbers) => {
     const currentDice = `d${dice}` as Dice;
     diceCounter[currentDice] = diceCounter[currentDice] + 1;
 
@@ -50,23 +53,29 @@ const Dices: React.FC = () => {
     setResultsSum(newSum);
     setLastResults([...lastResults, rollResult])
     setDiceCounter({ ...diceCounter })
-  }, [resultsSum, lastResults]);
 
-  const clearResults = useCallback(() => {
+    addHistoryItem({
+      expression: `1d${dice}`,
+      name: 'Dices Screen',
+      result: `${rollResult}`,
+    });
+  };
+
+  const clearResults = () => {
     setResultsSum(0);
     setLastResults([]);
     setDiceCounter({
       d2: 0, d4: 0, d6: 0, d8: 0, d10: 0, d12: 0, d20: 0, d100: 0
     });
-  }, []);
+  };
 
-  const renderLastResults = useCallback((): string => {
+  const renderLastResults = (): string => {
     return lastResults.length > 4 ?
       "... + " + lastResults.slice(lastResults.length - 4, lastResults.length).join().replace(/,/g, " + ") :
       lastResults.join().replace(/,/g, " + ") || "0"
-  }, [lastResults]);
+  };
 
-  const renderDiceCounter = useCallback((counter: Dice) => {
+  const renderDiceCounter = (counter: Dice) => {
     const count = diceCounter[counter];
 
     if (count > 0) {
@@ -78,7 +87,7 @@ const Dices: React.FC = () => {
     }
 
     return null;
-  }, [diceCounter]);
+  };
 
   const isSmallDevice = useMediaQuery({
     maxDeviceHeight: 700,

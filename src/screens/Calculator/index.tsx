@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { EvalDiceExpression } from '../../helpers/Math';
-
+import { useHistory } from '../../hooks/History';
 import {
   Container,
   ResultText,
@@ -17,27 +17,29 @@ import {
 const ExpressionMaxSize = 25;
 
 const Calculator: React.FC = () => {
+  const { addHistoryItem } = useHistory();
+
   const [result, setResult] = useState('0');
   const [expression, setExpression] = useState('');
   const [expressionsError, setExpressionError] = useState(false);
   const [expressionToShow, setExpressionToShow] = useState('');
 
-  const updateExpressions = useCallback((newCharacter: string) => {
+  const updateExpressions = (newCharacter: string) => {
     if (expression.length < ExpressionMaxSize) {
       const newExpression = expression + newCharacter;
       setExpression(newExpression);
       setExpressionToShow(newExpression.replace(/\//g,'÷').replace(/\*/g,'x'));
     }
-  }, [expression, expressionToShow]);
+  };
 
-  const clearExpression = useCallback(() => {
+  const clearExpression = () => {
     setExpression('');
     setExpressionToShow('');
     setResult('0');
     setExpressionError(false);
-  }, []);
+  };
 
-  const evaluateExpression = useCallback(() => {
+  const evaluateExpression = () => {
     let expressionResult = 0;
 
     try {
@@ -49,7 +51,13 @@ const Calculator: React.FC = () => {
     }
     setExpressionError(false);
     setResult(`${expressionResult}`);
-  }, [expression]);
+
+    addHistoryItem({
+      expression,
+      name: 'Calculator',
+      result: `${expressionResult}`,
+    });
+  };
 
   const isSmallDevice = useMediaQuery({
     maxDeviceHeight: 700,

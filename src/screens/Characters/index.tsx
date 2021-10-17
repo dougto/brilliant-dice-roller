@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -53,7 +53,7 @@ const Characters: React.FC = () => {
     loadCharacters();
   }, [isFocused]);
 
-  const handleAddCharacter = useCallback(async () => {
+  const handleAddCharacter = async () => {
     if (characters.find(char => char.name === newCharacterName)) {
       Alert.alert('Character already exists!');
       return;
@@ -68,9 +68,9 @@ const Characters: React.FC = () => {
 
     setCharacters([...characters, newCharacter]);
     setIsModalOpen(false);
-  }, [newCharacterName, characters]);
+  };
 
-  const renderCharacters = useCallback(() => {
+  const renderCharacters = () => {
     if (loading) {
       return <ActivityIndicator/>;
     }
@@ -86,10 +86,10 @@ const Characters: React.FC = () => {
         </CharacterContainer>
       ))
     }
-    return (<NoCharactersText>No Characters saved yet :(</NoCharactersText>)
-  }, [characters, loading]);
+    return (<NoCharactersText>No characters created yet. Press the plus button to create a character.</NoCharactersText>)
+  };
 
-  const renderAddCharacterModal = useCallback(() => (
+  const renderAddCharacterModal = () => (
     <Backdrop>
       <ModalContainer>
         <ModalRow>
@@ -114,7 +114,7 @@ const Characters: React.FC = () => {
         </ModalButton>
       </ModalContainer>
     </Backdrop>
-  ), [newCharacterName, setNewCharacterName]);
+  );
 
   return (
     <Container>
