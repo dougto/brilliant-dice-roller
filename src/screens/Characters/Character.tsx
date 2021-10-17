@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -53,7 +53,7 @@ const Character: React.FC = () => {
 
   const navigation = useNavigation();
 
-  const handleAddRoll = useCallback(async () => {
+  const handleAddRoll = async () => {
     try {
       EvalDiceExpression(newRoll.expression);
     } catch(error) {
@@ -81,24 +81,24 @@ const Character: React.FC = () => {
 
     setCurrentCharacter(updatedCharacter);
     setIsAddRollModalOpen(false);
-  }, [newRoll, currentCharacter]);
+  };
 
-  const handleCharacterDeletion = useCallback(async () => {
+  const handleCharacterDeletion = async () => {
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.filter(char => char.name != currentCharacter.name);
 
     await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
 
     navigation.navigate('Characters');
-  }, [currentCharacter]);
+  };
 
-  const handleRoll = useCallback((expression: string) => {
+  const handleRoll = (expression: string) => {
     const result = EvalDiceExpression(expression);
 
     setRollResult(result);
-  }, [setRollResult]);
+  };
 
-  const handleRollDeletion = useCallback(async (rollName: string) => {
+  const handleRollDeletion = async (rollName: string) => {
     const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter(roll => roll.name != rollName);
     const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...updatedRolls]};
 
@@ -113,9 +113,9 @@ const Character: React.FC = () => {
     await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
 
     setCurrentCharacter(updatedCharacter);
-  }, [currentCharacter, setCurrentCharacter]);
+  };
 
-  const renderRolls = useCallback(() => {
+  const renderRolls = () => {
     if (currentCharacter.rolls.length > 0) {
       return (
         <>
@@ -146,9 +146,9 @@ const Character: React.FC = () => {
     }
 
     return (<NoCharactersText>No rolls yet :(</NoCharactersText>)
-  }, [currentCharacter, setCurrentCharacter, handleRoll]);
+  };
 
-  const renderAddRollModal = useCallback(() => (
+  const renderAddRollModal = () => (
     <Backdrop>
       <ModalContainer>
         <ModalRow>
@@ -181,9 +181,9 @@ const Character: React.FC = () => {
         </ModalButton>
       </ModalContainer>
     </Backdrop>
-  ), [setIsAddRollModalOpen, newRoll, setNewRoll, handleAddRoll]);
+  );
 
-  const renderDeletionModal = useCallback(() => (
+  const renderDeletionModal = () => (
     <Backdrop>
       <ModalContainer>
         <ModalRow>
@@ -207,9 +207,9 @@ const Character: React.FC = () => {
         </ModalDoubleButtonsContainer>
       </ModalContainer>
     </Backdrop>
-  ), []);
+  );
 
-  const renderModal = useCallback(() => {
+  const renderModal = () => {
     if (isAddRollModalOpen) {
       return renderAddRollModal();
     }
@@ -219,14 +219,7 @@ const Character: React.FC = () => {
     }
 
     return null;
-  }, [
-    isDeletionModalOpen,
-    isAddRollModalOpen,
-    setIsAddRollModalOpen,
-    newRoll,
-    setNewRoll,
-    handleAddRoll
-  ]);
+  };
 
   return (
     <CharacterScreenContainer>
