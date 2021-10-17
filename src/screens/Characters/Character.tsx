@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { useHistory } from '../../hooks/History';
 import { EvalDiceExpression } from '../../helpers/Math';
 import colors from "../../constants/Colors";
 import { ICharacterRoll, ICharacter } from '.';
@@ -44,6 +45,7 @@ interface IRouteParams {
 const Character: React.FC = () => {
   const route = useRoute();
   const { character } = route.params as IRouteParams;
+  const { addHistoryItem } = useHistory();
 
   const [currentCharacter, setCurrentCharacter] = useState(character);
   const [isDeletionModalOpen, setIsDeletionModalOpen] = useState(false);
@@ -92,8 +94,14 @@ const Character: React.FC = () => {
     navigation.navigate('Characters');
   };
 
-  const handleRoll = (expression: string) => {
+  const handleRoll = (expression: string, name: string) => {
     const result = EvalDiceExpression(expression);
+
+    addHistoryItem({
+      result: `${result}`,
+      expression,
+      name,
+    });
 
     setRollResult(result);
   };
@@ -132,7 +140,7 @@ const Character: React.FC = () => {
                       <RollExpression>{roll.expression}</RollExpression>
                     </RollContentColumn>
                     <RollButton>
-                      <RollButtonText onPress={() => { handleRoll(roll.expression) }}>Roll</RollButtonText>
+                      <RollButtonText onPress={() => { handleRoll(roll.expression, roll.name) }}>Roll</RollButtonText>
                     </RollButton>
                   </RollContentContainer>
                 </RollContainer>
