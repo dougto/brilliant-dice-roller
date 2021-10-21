@@ -15,7 +15,7 @@ export const Roll = (quantity: number, dice: number): number => {
 };
 
 export const EvalDiceExpression = (expression: string): number => {
-  if (expression === "") {
+  if (expression === '') {
     return 0;
   }
 
@@ -23,28 +23,28 @@ export const EvalDiceExpression = (expression: string): number => {
 
   const expressionWithoutDices = expressionComponents.map(
     (component: string) => {
-      if (component.includes("d")) {
+      if (component.includes('d')) {
         if ((component.match(/d/g) as Array<string>).length > 1) {
-          throw new Error("invalid expression");
+          throw new Error('invalid expression');
         }
 
-        const [quantity, dice] = component.split("d");
+        const [quantity, dice] = component.split('d');
 
         if (
-          !Number.isInteger(parseInt(quantity)) ||
-          !Number.isInteger(parseInt(dice))
+          !Number.isInteger(parseInt(quantity, 10))
+          || !Number.isInteger(parseInt(dice, 10))
         ) {
-          throw new Error("invalid expression");
+          throw new Error('invalid expression');
         }
 
-        return `${Roll(parseInt(quantity), parseInt(dice))}`;
+        return `${Roll(parseInt(quantity, 10), parseInt(dice, 10))}`;
       }
 
       return component;
-    }
+    },
   );
 
-  const result = eval(expressionWithoutDices.join().replace(/,/g, ""));
+  const result = eval(expressionWithoutDices.join().replace(/,/g, ''));
 
   return result;
 };

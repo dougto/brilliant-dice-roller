@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import React, {
+  createContext, useState, useContext, useCallback, useEffect,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface IHistoryItem {
@@ -31,7 +33,7 @@ const HistoryProvider: React.FC = ({ children }) => {
 
       const newHistory = storageResult ? JSON.parse(storageResult) : [];
 
-      setHistory(newHistory as IHistoryItem[])
+      setHistory(newHistory as IHistoryItem[]);
     }
 
     loadHistory();
@@ -64,7 +66,7 @@ const HistoryProvider: React.FC = ({ children }) => {
       value={{
         history,
         addHistoryItem,
-        clearHistory
+        clearHistory,
       }}
     >
       {children}
@@ -80,6 +82,6 @@ const useHistory = () => {
   }
 
   return context;
-}
+};
 
 export { HistoryProvider, useHistory };

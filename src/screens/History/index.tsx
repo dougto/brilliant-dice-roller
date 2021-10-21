@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import colors from "../../constants/Colors";
+import colors from '../../constants/Colors';
 import { useHistory, IHistoryItem } from '../../hooks/History';
 import {
   PageContainer,
@@ -49,7 +49,7 @@ const History: React.FC = () => {
               setIsModalOpen(false);
             }}
           >
-            <MaterialCommunityIcons size={30} name="close" color={colors.grey}/>
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
           </TouchableOpacity>
         </CloseButtonContainer>
         <ModalTextContainer>
@@ -77,25 +77,29 @@ const History: React.FC = () => {
   );
 
   const renderHistoryItem = (historyItem: IHistoryItem) => {
-    const { name, date, expression, result } = historyItem;
+    const {
+      name, date, expression, result,
+    } = historyItem;
 
     return (
       <HistoryItemContainer>
         <HistoryItemContentContainer>
           <HistoryItemLeftContainer>
             <HistoryItemTitle>{name}</HistoryItemTitle>
-            <HistoryItemText>{'roll: '}
+            <HistoryItemText>
+              {'roll: '}
               <HistoryItemExpression>{expression}</HistoryItemExpression>
             </HistoryItemText>
           </HistoryItemLeftContainer>
           <HistoryItemRightContainer>
             <HistoryItemDate>{date}</HistoryItemDate>
-            <HistoryItemText>{'result: '}
+            <HistoryItemText>
+              {'result: '}
               <HistoryItemResult>{result}</HistoryItemResult>
             </HistoryItemText>
           </HistoryItemRightContainer>
         </HistoryItemContentContainer>
-        <LineDivider/>
+        <LineDivider />
       </HistoryItemContainer>
     );
   };
@@ -103,25 +107,27 @@ const History: React.FC = () => {
   return (
     <PageContainer>
       <PageTitle>History</PageTitle>
-      <LineDivider/>
-      {history.length > 0 ?
-        <>
-          <FlatList
-            bounces={false}
-            style={{ width: '100%'}}
-            data={history}
-            renderItem={({ item }) => renderHistoryItem(item)}
-            keyExtractor={(item, index) => `${item.date}-${index}`}
-            ListFooterComponent={() => <Footer/>}
-          />
-          <ClearButton onPress={onClearHistoryPress}>
-            <MaterialCommunityIcons size={40} name="trash-can-outline" color={colors.white}/>
-          </ClearButton>
-        </>
+      <LineDivider />
+      {history.length > 0
+        ? (
+          <>
+            <FlatList
+              bounces={false}
+              style={{ width: '100%' }}
+              data={history}
+              renderItem={({ item }) => renderHistoryItem(item)}
+              keyExtractor={(item, index) => `${item.date}-${index}`}
+              ListFooterComponent={() => <Footer />}
+            />
+            <ClearButton onPress={onClearHistoryPress}>
+              <MaterialCommunityIcons size={40} name="trash-can-outline" color={colors.white} />
+            </ClearButton>
+          </>
+        )
         : <PageMessage>No history yet. Roll some dices!</PageMessage>}
       {isModalOpen ? renderModal() : null}
     </PageContainer>
   );
-}
+};
 
 export default History;

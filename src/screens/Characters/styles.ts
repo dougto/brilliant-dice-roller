@@ -1,5 +1,5 @@
-import styled from "styled-components/native";
-import colors from "../../constants/Colors";
+import styled from 'styled-components/native';
+import colors from '../../constants/Colors';
 
 export const Container = styled.View`
   position: relative;
