@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import {
-  Alert, ScrollView, TouchableOpacity, View,
+  Alert, FlatList, TouchableOpacity, View,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useHistory } from '../../hooks/History';
-import { EvalDiceExpression } from '../../helpers/Math';
+import { EvalDiceExpression, isDiceExpressionValid } from '../../helpers/Math';
 import colors from '../../constants/Colors';
 import { ICharacterRoll, ICharacter } from '.';
 import {
   CharacterScreenContainer,
   CharacterName,
   CharacterHeaderContainer,
-  DeleteButton,
+  EditButton,
   CharacterContainerBottomLine,
   AddRollButton,
   NoCharactersText,
@@ -34,10 +34,18 @@ import {
   RollButtonText,
   RollExpression,
   RollName,
-  SmallDeleteButton,
   RollBottomLine,
   RollOutsideContainer,
-  RollResult,
+  RollResultText,
+  RollResultContainer,
+  ModalCloseButtonContainer,
+  StyledKeyboardAvoidingView,
+  ModalYesButton,
+  ModalNoButton,
+  RedText,
+  EditBoxContainer,
+  EditBoxText,
+  MarginView,
 } from './styles';
 
 interface IRouteParams {
@@ -49,18 +57,21 @@ const Character: React.FC = () => {
   const { character } = route.params as IRouteParams;
   const { addHistoryItem } = useHistory();
 
+  const [newCharacterName, setNewCharacterName] = useState('');
+  const [isEditCharacterNameModalOpen, setIsEditCharacterNameModalOpen] = useState(false);
+  const [isEditBoxOpen, setisEditBoxOpen] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
-  const [isDeletionModalOpen, setIsDeletionModalOpen] = useState(false);
+  const [isCharacterDeletionModalOpen, setIsCharacterDeletionModalOpen] = useState(false);
   const [isAddRollModalOpen, setIsAddRollModalOpen] = useState(false);
+  const [selectedRoll, setSelectedRoll] = useState<ICharacterRoll>({} as ICharacterRoll);
+  const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
   const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
-  const [rollResult, setRollResult] = useState(0);
+  const [rollResults, setRollResults] = useState<number[]>([]);
 
   const navigation = useNavigation();
 
   const handleAddRoll = async () => {
-    try {
-      EvalDiceExpression(newRoll.expression);
-    } catch (error) {
+    if (!isDiceExpressionValid(newRoll.expression)) {
       Alert.alert('Invalid expression');
       return;
     }
@@ -87,6 +98,27 @@ const Character: React.FC = () => {
     setIsAddRollModalOpen(false);
   };
 
+  const handleEditCharacterName = async () => {
+    if (!newCharacterName) {
+      Alert.alert('Please insert a name');
+      return;
+    }
+
+    const updatedCharacter: ICharacter = {
+      ...currentCharacter,
+      name: newCharacterName,
+    };
+
+    const storedCharacters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
+    const filteredCharacters = storedCharacters.filter((char) => char.name != currentCharacter.name);
+    const newCharactersSet = [updatedCharacter, ...filteredCharacters];
+
+    await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
+
+    setCurrentCharacter(updatedCharacter);
+    setIsEditCharacterNameModalOpen(false);
+  };
+
   const handleCharacterDeletion = async () => {
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.filter((char) => char.name != currentCharacter.name);
@@ -96,19 +128,26 @@ const Character: React.FC = () => {
     navigation.navigate('Characters');
   };
 
-  const handleRoll = (expression: string, name: string) => {
+  const handleRoll = (expression: string, name: string, index: number) => {
     const result = EvalDiceExpression(expression);
+
+    const newRollResults = [...rollResults];
+    newRollResults[index] = result;
+
+    setRollResults([...newRollResults]);
 
     addHistoryItem({
       result: `${result}`,
       expression,
       name,
     });
-
-    setRollResult(result);
   };
 
   const handleRollDeletion = async (rollName: string) => {
+    if (!rollName) {
+      return;
+    }
+
     const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter((roll) => roll.name != rollName);
     const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...updatedRolls] };
 
@@ -125,100 +164,240 @@ const Character: React.FC = () => {
     setCurrentCharacter(updatedCharacter);
   };
 
+  const renderRoll = ({ item: roll, index }: { item: ICharacterRoll, index: number}) => (
+    <RollOutsideContainer>
+      <RollContainer>
+        <RollContentContainer>
+          <RollContentColumn>
+            <RollName>{roll.name}</RollName>
+            <RollExpression>{roll.expression}</RollExpression>
+            <TouchableOpacity
+              onPress={() => { setSelectedRoll(roll); setIsRollDeletionModalOpen(true); }}
+            >
+              <RedText>delete</RedText>
+            </TouchableOpacity>
+          </RollContentColumn>
+          <RollResultContainer>
+            <RollResultText>{rollResults[index]}</RollResultText>
+            <RollButton onPress={() => { handleRoll(roll.expression, roll.name, index); }}>
+              <RollButtonText>Roll</RollButtonText>
+            </RollButton>
+          </RollResultContainer>
+        </RollContentContainer>
+      </RollContainer>
+      <RollBottomLine />
+    </RollOutsideContainer>
+  );
+
   const renderRolls = () => {
     if (currentCharacter.rolls.length > 0) {
       return (
-        <>
-          <ScrollView style={{ width: '100%' }}>
-            {currentCharacter.rolls.map((roll) => (
-              <RollOutsideContainer key={roll.name}>
-                <RollContainer>
-                  <SmallDeleteButton onPress={() => { handleRollDeletion(roll.name); }}>
-                    <MaterialCommunityIcons size={20} name="trash-can-outline" color={colors.white} />
-                  </SmallDeleteButton>
-                  <RollContentContainer>
-                    <RollContentColumn>
-                      <RollName>{roll.name}</RollName>
-                      <RollExpression>{roll.expression}</RollExpression>
-                    </RollContentColumn>
-                    <RollButton>
-                      <RollButtonText onPress={() => { handleRoll(roll.expression, roll.name); }}>Roll</RollButtonText>
-                    </RollButton>
-                  </RollContentContainer>
-                </RollContainer>
-                <RollBottomLine />
-              </RollOutsideContainer>
-            ))}
-          </ScrollView>
-          <View style={{ marginBottom: 40 }} />
-        </>
+        <FlatList
+          style={{ width: '100%' }}
+          data={currentCharacter.rolls}
+          renderItem={renderRoll}
+          keyExtractor={({ name }) => name}
+          ListFooterComponent={<View style={{ marginBottom: 100 }} />}
+        />
       );
     }
 
-    return (<NoCharactersText>No rolls yet :(</NoCharactersText>);
+    return (<NoCharactersText>No rolls yet.</NoCharactersText>);
   };
 
   const renderAddRollModal = () => (
     <Backdrop>
-      <ModalContainer>
-        <ModalRow>
+      <StyledKeyboardAvoidingView>
+        <ModalContainer>
+          <ModalCloseButtonContainer>
+            <TouchableOpacity
+              onPress={() => {
+                setNewRoll({ name: '', expression: '' });
+                setIsAddRollModalOpen(false);
+              }}
+            >
+              <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+            </TouchableOpacity>
+          </ModalCloseButtonContainer>
           <ModalText>Insert new roll name:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewRoll({ ...newRoll, name: value })}
+            placeholder="Roll name"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            autoCorrect={false}
+          />
+          <ModalText>Insert new roll expression:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
+            placeholder="Roll expression"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            autoCorrect={false}
+          />
+          <ModalButton onPress={handleAddRoll}>
+            <ModalButtonText>Add Roll</ModalButtonText>
+          </ModalButton>
+        </ModalContainer>
+      </StyledKeyboardAvoidingView>
+    </Backdrop>
+  );
+
+  const renderRollDeletionModal = () => (
+    <Backdrop>
+      <ModalContainer>
+        <ModalCloseButtonContainer>
           <TouchableOpacity
             onPress={() => {
-              setNewRoll({ name: '', expression: '' });
-              setIsAddRollModalOpen(false);
+              setIsRollDeletionModalOpen(false);
             }}
           >
             <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
           </TouchableOpacity>
+        </ModalCloseButtonContainer>
+        <ModalRow>
+          <ModalText>
+            Are you sure you want to delete the roll '
+            {selectedRoll.name}
+            '?
+          </ModalText>
         </ModalRow>
-        <ModalInput
-          onChangeText={(value) => setNewRoll({ ...newRoll, name: value })}
-          placeholder="Roll name"
-          autoCapitalize="none"
-          autoCompleteType="off"
-          autoCorrect={false}
-        />
-        <ModalText>Insert new roll expression:</ModalText>
-        <ModalInput
-          onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
-          placeholder="Roll expression"
-          autoCapitalize="none"
-          autoCompleteType="off"
-          autoCorrect={false}
-        />
-        <ModalButton onPress={handleAddRoll}>
-          <ModalButtonText>Add Roll</ModalButtonText>
-        </ModalButton>
+        <ModalDoubleButtonsContainer>
+          <ModalYesButton onPress={() => {
+            handleRollDeletion(selectedRoll.name);
+            setIsRollDeletionModalOpen(false);
+          }}
+          >
+            <ModalButtonText>
+              Yes
+            </ModalButtonText>
+          </ModalYesButton>
+          <ModalNoButton onPress={() => {
+            setIsRollDeletionModalOpen(false);
+          }}
+          >
+            <ModalButtonText>
+              No
+            </ModalButtonText>
+          </ModalNoButton>
+        </ModalDoubleButtonsContainer>
       </ModalContainer>
     </Backdrop>
   );
 
-  const renderDeletionModal = () => (
+  const renderCharacterDeletionModal = () => (
     <Backdrop>
       <ModalContainer>
+        <ModalCloseButtonContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setIsCharacterDeletionModalOpen(false);
+            }}
+          >
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+          </TouchableOpacity>
+        </ModalCloseButtonContainer>
         <ModalRow>
           <ModalText>Are you sure you want to delete this character?</ModalText>
         </ModalRow>
+        <MarginView />
         <ModalDoubleButtonsContainer>
-          <ModalButton onPress={() => {
+          <ModalYesButton onPress={() => {
             handleCharacterDeletion();
           }}
           >
             <ModalButtonText>
               Yes
             </ModalButtonText>
-          </ModalButton>
-          <ModalButton onPress={() => {
-            setIsDeletionModalOpen(false);
+          </ModalYesButton>
+          <ModalNoButton onPress={() => {
+            setIsCharacterDeletionModalOpen(false);
           }}
           >
             <ModalButtonText>
               No
             </ModalButtonText>
-          </ModalButton>
+          </ModalNoButton>
         </ModalDoubleButtonsContainer>
       </ModalContainer>
+    </Backdrop>
+  );
+
+  const renderEditBox = () => (
+    <Backdrop>
+      <ModalContainer>
+        <ModalCloseButtonContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+            }}
+          >
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+          </TouchableOpacity>
+        </ModalCloseButtonContainer>
+        <EditBoxContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+              setIsEditCharacterNameModalOpen(true);
+            }}
+          >
+            <EditBoxText>Edit character name</EditBoxText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+              setIsCharacterDeletionModalOpen(true);
+            }}
+          >
+            <EditBoxText>Delete character</EditBoxText>
+          </TouchableOpacity>
+        </EditBoxContainer>
+      </ModalContainer>
+    </Backdrop>
+  );
+
+  const renderEditCharacterNameModal = () => (
+    <Backdrop>
+      <StyledKeyboardAvoidingView>
+        <ModalContainer>
+          <ModalCloseButtonContainer>
+            <TouchableOpacity
+              onPress={() => {
+                setIsEditCharacterNameModalOpen(false);
+              }}
+            >
+              <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+            </TouchableOpacity>
+          </ModalCloseButtonContainer>
+          <ModalText>Insert new character name:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewCharacterName(value)}
+            placeholder="New character name"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            autoCorrect={false}
+          />
+          <ModalDoubleButtonsContainer>
+            <ModalYesButton onPress={() => {
+              handleEditCharacterName();
+            }}
+            >
+              <ModalButtonText>
+                Confirm
+              </ModalButtonText>
+            </ModalYesButton>
+            <ModalNoButton onPress={() => {
+              setIsEditCharacterNameModalOpen(false);
+            }}
+            >
+              <ModalButtonText>
+                Cancel
+              </ModalButtonText>
+            </ModalNoButton>
+          </ModalDoubleButtonsContainer>
+        </ModalContainer>
+      </StyledKeyboardAvoidingView>
     </Backdrop>
   );
 
@@ -227,8 +406,20 @@ const Character: React.FC = () => {
       return renderAddRollModal();
     }
 
-    if (isDeletionModalOpen) {
-      return renderDeletionModal();
+    if (isCharacterDeletionModalOpen) {
+      return renderCharacterDeletionModal();
+    }
+
+    if (isRollDeletionModalOpen) {
+      return renderRollDeletionModal();
+    }
+
+    if (isEditBoxOpen) {
+      return renderEditBox();
+    }
+
+    if (isEditCharacterNameModalOpen) {
+      return renderEditCharacterNameModal();
     }
 
     return null;
@@ -241,18 +432,16 @@ const Character: React.FC = () => {
           <MaterialCommunityIcons size={30} name="chevron-left" color={colors.grey} />
         </TouchableOpacity>
         <CharacterName>{currentCharacter.name}</CharacterName>
-        <DeleteButton onPress={() => { setIsDeletionModalOpen(true); }}>
-          <MaterialCommunityIcons size={30} name="trash-can-outline" color={colors.white} />
-        </DeleteButton>
+        <EditButton onPress={() => { setisEditBoxOpen(true); }}>
+          <MaterialCommunityIcons size={30} name="dots-vertical" color={colors.grey} />
+        </EditButton>
       </CharacterHeaderContainer>
-      <CharacterContainerBottomLine />
-      <RollResult>{rollResult}</RollResult>
       <CharacterContainerBottomLine />
       {renderRolls()}
       <AddRollButton onPress={() => { setIsAddRollModalOpen(true); }}>
         <AddRollText>Add Roll</AddRollText>
       </AddRollButton>
-      {isAddRollModalOpen || isDeletionModalOpen ? renderModal() : null}
+      {renderModal()}
     </CharacterScreenContainer>
   );
 };
