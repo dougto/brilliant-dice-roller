@@ -18,6 +18,13 @@
         "react",
         "@typescript-eslint"
     ],
+    "settings": {
+        "import/resolver": {
+        "node": {
+            "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        }
+        }
+    },
     "rules": {
         "operator-assignment": "off",
         "react/no-unescaped-entities": "off",
