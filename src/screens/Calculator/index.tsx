@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-import { EvalDiceExpression } from '../../helpers/Math';
+import { EvalDiceExpression, isDiceExpressionValid } from '../../helpers/Math';
 import { useHistory } from '../../hooks/History';
 import {
   Container,
@@ -12,6 +12,10 @@ import {
   Row,
   Button,
   ButtonText,
+  EvaluateButton,
+  ClearButton,
+  ClearText,
+  GridContainer,
 } from './styles';
 
 const ExpressionMaxSize = 25;
@@ -21,14 +25,13 @@ const Calculator: React.FC = () => {
 
   const [result, setResult] = useState('0');
   const [expression, setExpression] = useState('');
-  const [expressionsError, setExpressionError] = useState(false);
   const [expressionToShow, setExpressionToShow] = useState('');
 
   const updateExpressions = (newCharacter: string) => {
     if (expression.length < ExpressionMaxSize) {
       const newExpression = expression + newCharacter;
       setExpression(newExpression);
-      setExpressionToShow(newExpression.replace(/\//g,'÷').replace(/\*/g,'x'));
+      setExpressionToShow(newExpression.replace(/\//g, '÷').replace(/\*/g, 'x'));
     }
   };
 
@@ -36,20 +39,11 @@ const Calculator: React.FC = () => {
     setExpression('');
     setExpressionToShow('');
     setResult('0');
-    setExpressionError(false);
   };
 
   const evaluateExpression = () => {
-    let expressionResult = 0;
+    const expressionResult = EvalDiceExpression(expression);
 
-    try {
-      expressionResult = EvalDiceExpression(expression);
-    } catch (error) {
-      setResult('Syntax Error');
-      setExpressionError(true);
-      return;
-    }
-    setExpressionError(false);
     setResult(`${expressionResult}`);
 
     addHistoryItem({
@@ -65,75 +59,83 @@ const Calculator: React.FC = () => {
 
   return (
     <Container>
-      <ResultText small={isSmallDevice} error={expressionsError}>{result}</ResultText>
-      <ExpressionContainer small={isSmallDevice} error={expressionsError}>
+      <ResultText small={isSmallDevice}>{result}</ResultText>
+      <ExpressionContainer small={isSmallDevice}>
         <ExpressionText>{expressionToShow}</ExpressionText>
       </ExpressionContainer>
       <ButtonsContainer>
         <Row>
-          <Button onPress={() => {updateExpressions('1')}}>
+          <Button onPress={() => { updateExpressions('1'); }}>
             <ButtonText>1</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('2')}}>
+          <Button onPress={() => { updateExpressions('2'); }}>
             <ButtonText>2</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('3')}}>
+          <Button onPress={() => { updateExpressions('3'); }}>
             <ButtonText>3</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('-')}}>
+          <Button onPress={() => { updateExpressions('-'); }} disabled={!isDiceExpressionValid(`${expression}-1`)}>
             <ButtonText>-</ButtonText>
           </Button>
         </Row>
         <Row>
-          <Button onPress={() => {updateExpressions('4')}}>
+          <Button onPress={() => { updateExpressions('4'); }}>
             <ButtonText>4</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('5')}}>
+          <Button onPress={() => { updateExpressions('5'); }}>
             <ButtonText>5</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('6')}}>
+          <Button onPress={() => { updateExpressions('6'); }}>
             <ButtonText>6</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('+')}}>
+          <Button onPress={() => { updateExpressions('+'); }} disabled={!isDiceExpressionValid(`${expression}+1`)}>
             <ButtonText>+</ButtonText>
           </Button>
         </Row>
         <Row>
-          <Button onPress={() => {updateExpressions('7')}}>
+          <Button onPress={() => { updateExpressions('7'); }}>
             <ButtonText>7</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('8')}}>
+          <Button onPress={() => { updateExpressions('8'); }}>
             <ButtonText>8</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('9')}}>
+          <Button onPress={() => { updateExpressions('9'); }}>
             <ButtonText>9</ButtonText>
           </Button>
-          <Button onPress={() => {updateExpressions('d')}}>
+          <Button onPress={() => { updateExpressions('d'); }} disabled={!isDiceExpressionValid(`${expression}d1`)}>
             <ButtonText>d</ButtonText>
           </Button>
         </Row>
         <Row>
-          <Button onPress={() => {updateExpressions('0')}}>
-            <ButtonText>0</ButtonText>
-          </Button>
-          <Button onPress={() => {updateExpressions('*')}}>
-            <ButtonText>x</ButtonText>
-          </Button>
-          <Button onPress={() => {updateExpressions('/')}}>
-            <ButtonText>÷</ButtonText>
-          </Button>
-          <Button onPress={() => {evaluateExpression()}}>
-            <ButtonText>=</ButtonText>
-          </Button>
+          <GridContainer>
+            <Button onPress={() => { updateExpressions('0'); }} disabled={!isDiceExpressionValid(`${expression}0`)}>
+              <ButtonText>0</ButtonText>
+            </Button>
+          </GridContainer>
+          <GridContainer>
+            <Button onPress={() => { updateExpressions('*'); }} disabled={!isDiceExpressionValid(`${expression}*1`)}>
+              <ButtonText>x</ButtonText>
+            </Button>
+          </GridContainer>
+          <GridContainer>
+            <Button onPress={() => { updateExpressions('/'); }} disabled={!isDiceExpressionValid(`${expression}/1`)}>
+              <ButtonText>÷</ButtonText>
+            </Button>
+          </GridContainer>
+          <GridContainer>
+            <EvaluateButton onPress={() => { evaluateExpression(); }} disabled={!isDiceExpressionValid(expression)}>
+              <ButtonText>=</ButtonText>
+            </EvaluateButton>
+          </GridContainer>
         </Row>
         <Row>
-          <Button onPress={() => {clearExpression()}}>
-            <ButtonText>clear</ButtonText>
-          </Button>
+          <ClearButton small={isSmallDevice} onPress={() => { clearExpression(); }}>
+            <ClearText small={isSmallDevice}>Clear</ClearText>
+          </ClearButton>
         </Row>
       </ButtonsContainer>
     </Container>
   );
-}
+};
 
 export default Calculator;

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import {
+  FlatList, TouchableOpacity, ActivityIndicator, Alert,
+} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import colors from "../../constants/Colors";
+import colors from '../../constants/Colors';
 import {
   Container,
+  PageTitle,
   CharacterContainer,
   CharacterName,
   CharacterContainerBottomLine,
@@ -28,6 +31,7 @@ export interface ICharacterRoll {
 }
 
 export interface ICharacter {
+  id: string;
   name: string;
   rolls: ICharacterRoll[];
 }
@@ -47,19 +51,23 @@ const Characters: React.FC = () => {
       const storedCharacters = await AsyncStorage.getItem('@bdr:characters');
       setLoading(false);
       if (!storedCharacters) return;
-      setCharacters(JSON.parse(storedCharacters) as ICharacter[])
+      setCharacters(JSON.parse(storedCharacters) as ICharacter[]);
     }
 
     loadCharacters();
   }, [isFocused]);
 
   const handleAddCharacter = async () => {
-    if (characters.find(char => char.name === newCharacterName)) {
+    if (characters.find((char) => char.name === newCharacterName)) {
       Alert.alert('Character already exists!');
       return;
     }
 
+    const dateExpression = (new Date()).getTime();
+    const newCharacterId = `${newCharacterName}-${dateExpression}`;
+
     const newCharacter: ICharacter = {
+      id: newCharacterId,
       name: newCharacterName,
       rolls: [],
     };
@@ -70,23 +78,32 @@ const Characters: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const renderCharacters = () => {
+  const renderCharacter = ({ item: character }: { item: ICharacter }) => (
+    <CharacterContainer key={character.id}>
+      <TouchableContainer onPress={() => { navigation.navigate('Character', { character }); }}>
+        <CharacterName>{character.name}</CharacterName>
+        <MaterialCommunityIcons size={30} name="chevron-right" color={colors.grey} />
+      </TouchableContainer>
+      <CharacterContainerBottomLine />
+    </CharacterContainer>
+  );
+
+  const renderCharacterList = () => {
     if (loading) {
-      return <ActivityIndicator/>;
+      return (<ActivityIndicator />);
     }
 
-    if (characters.length > 0) {
-      return characters.map((character) => (
-        <CharacterContainer key={character.name}>
-          <TouchableContainer onPress={() => { navigation.navigate('Character', {character}) }}>
-            <CharacterName>{character.name}</CharacterName>
-            <MaterialCommunityIcons size={30} name="chevron-right" color={colors.grey} />
-          </TouchableContainer>
-          <CharacterContainerBottomLine />
-        </CharacterContainer>
-      ))
+    if (characters.length === 0) {
+      return (<NoCharactersText>No characters created yet. Press the plus button to create a character.</NoCharactersText>);
     }
-    return (<NoCharactersText>No characters created yet. Press the plus button to create a character.</NoCharactersText>)
+
+    return (
+      <FlatList
+        style={{ width: '100%' }}
+        data={characters}
+        renderItem={renderCharacter}
+      />
+    );
   };
 
   const renderAddCharacterModal = () => (
@@ -98,12 +115,13 @@ const Characters: React.FC = () => {
             onPress={() => {
               setNewCharacterName('');
               setIsModalOpen(false);
-            }}>
-            <MaterialCommunityIcons size={30} name="close" color={colors.grey}/>
+            }}
+          >
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
           </TouchableOpacity>
         </ModalRow>
         <ModalInput
-          onChangeText={(value) => setNewCharacterName(value) }
+          onChangeText={(value) => setNewCharacterName(value)}
           placeholder="Name"
           autoCapitalize="none"
           autoCompleteType="off"
@@ -118,15 +136,15 @@ const Characters: React.FC = () => {
 
   return (
     <Container>
-      <ScrollView style={{ width: '100%' }}>
-        {renderCharacters()}
-      </ScrollView>
-      <AddButton onPress={() => { setIsModalOpen(true) }}>
-        <MaterialCommunityIcons size={60} name="plus" color={colors.white}/>
+      <PageTitle>Characters</PageTitle>
+      <CharacterContainerBottomLine />
+      {renderCharacterList()}
+      <AddButton onPress={() => { setIsModalOpen(true); }}>
+        <MaterialCommunityIcons size={60} name="plus" color={colors.white} />
       </AddButton>
       {isModalOpen ? renderAddCharacterModal() : null}
     </Container>
   );
-}
+};
 
 export default Characters;

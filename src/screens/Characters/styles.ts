@@ -1,13 +1,19 @@
-import styled from "styled-components/native";
-import colors from "../../constants/Colors";
+import styled from 'styled-components/native';
+import colors from '../../constants/Colors';
 
 export const Container = styled.View`
   position: relative;
   display: flex;
   flex: 1;
   align-items: center;
-  justify-content: center;
   margin-top: 50px;
+`;
+
+export const PageTitle = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  color: ${colors.grey};
+  margin: 20px;
 `;
 
 export const CharacterContainer = styled.View`

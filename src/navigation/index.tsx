@@ -11,7 +11,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 export default function Navigation() {
   return (
     <AppProvider>
-      <NavigationContainer linking={LinkingConfiguration} >
+      <NavigationContainer linking={LinkingConfiguration}>
         <RootNavigator />
       </NavigationContainer>
     </AppProvider>
