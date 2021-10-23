@@ -14,7 +14,7 @@ import {
   CharacterScreenContainer,
   CharacterName,
   CharacterHeaderContainer,
-  DeleteButton,
+  EditButton,
   CharacterContainerBottomLine,
   AddRollButton,
   NoCharactersText,
@@ -43,6 +43,9 @@ import {
   ModalYesButton,
   ModalNoButton,
   RedText,
+  EditBoxContainer,
+  EditBoxText,
+  MarginView,
 } from './styles';
 
 interface IRouteParams {
@@ -54,9 +57,14 @@ const Character: React.FC = () => {
   const { character } = route.params as IRouteParams;
   const { addHistoryItem } = useHistory();
 
+  const [newCharacterName, setNewCharacterName] = useState('');
+  const [isEditCharacterNameModalOpen, setIsEditCharacterNameModalOpen] = useState(false);
+  const [isEditBoxOpen, setisEditBoxOpen] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
-  const [isDeletionModalOpen, setIsDeletionModalOpen] = useState(false);
+  const [isCharacterDeletionModalOpen, setIsCharacterDeletionModalOpen] = useState(false);
   const [isAddRollModalOpen, setIsAddRollModalOpen] = useState(false);
+  const [selectedRoll, setSelectedRoll] = useState<ICharacterRoll>({} as ICharacterRoll);
+  const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
   const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
   const [rollResults, setRollResults] = useState<number[]>([]);
 
@@ -90,6 +98,27 @@ const Character: React.FC = () => {
     setIsAddRollModalOpen(false);
   };
 
+  const handleEditCharacterName = async () => {
+    if (!newCharacterName) {
+      Alert.alert('Please insert a name');
+      return;
+    }
+
+    const updatedCharacter: ICharacter = {
+      ...currentCharacter,
+      name: newCharacterName,
+    };
+
+    const storedCharacters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
+    const filteredCharacters = storedCharacters.filter((char) => char.name != currentCharacter.name);
+    const newCharactersSet = [updatedCharacter, ...filteredCharacters];
+
+    await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
+
+    setCurrentCharacter(updatedCharacter);
+    setIsEditCharacterNameModalOpen(false);
+  };
+
   const handleCharacterDeletion = async () => {
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.filter((char) => char.name != currentCharacter.name);
@@ -115,6 +144,10 @@ const Character: React.FC = () => {
   };
 
   const handleRollDeletion = async (rollName: string) => {
+    if (!rollName) {
+      return;
+    }
+
     const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter((roll) => roll.name != rollName);
     const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...updatedRolls] };
 
@@ -139,7 +172,7 @@ const Character: React.FC = () => {
             <RollName>{roll.name}</RollName>
             <RollExpression>{roll.expression}</RollExpression>
             <TouchableOpacity
-              onPress={() => handleRollDeletion(roll.name)}
+              onPress={() => { setSelectedRoll(roll); setIsRollDeletionModalOpen(true); }}
             >
               <RedText>delete</RedText>
             </TouchableOpacity>
@@ -210,24 +243,29 @@ const Character: React.FC = () => {
     </Backdrop>
   );
 
-  const renderDeletionModal = () => (
+  const renderRollDeletionModal = () => (
     <Backdrop>
       <ModalContainer>
         <ModalCloseButtonContainer>
           <TouchableOpacity
             onPress={() => {
-              setIsDeletionModalOpen(false);
+              setIsRollDeletionModalOpen(false);
             }}
           >
             <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
           </TouchableOpacity>
         </ModalCloseButtonContainer>
         <ModalRow>
-          <ModalText>Are you sure you want to delete this character?</ModalText>
+          <ModalText>
+            Are you sure you want to delete the roll '
+            {selectedRoll.name}
+            '?
+          </ModalText>
         </ModalRow>
         <ModalDoubleButtonsContainer>
           <ModalYesButton onPress={() => {
-            handleCharacterDeletion();
+            handleRollDeletion(selectedRoll.name);
+            setIsRollDeletionModalOpen(false);
           }}
           >
             <ModalButtonText>
@@ -235,7 +273,7 @@ const Character: React.FC = () => {
             </ModalButtonText>
           </ModalYesButton>
           <ModalNoButton onPress={() => {
-            setIsDeletionModalOpen(false);
+            setIsRollDeletionModalOpen(false);
           }}
           >
             <ModalButtonText>
@@ -247,13 +285,141 @@ const Character: React.FC = () => {
     </Backdrop>
   );
 
+  const renderCharacterDeletionModal = () => (
+    <Backdrop>
+      <ModalContainer>
+        <ModalCloseButtonContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setIsCharacterDeletionModalOpen(false);
+            }}
+          >
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+          </TouchableOpacity>
+        </ModalCloseButtonContainer>
+        <ModalRow>
+          <ModalText>Are you sure you want to delete this character?</ModalText>
+        </ModalRow>
+        <MarginView />
+        <ModalDoubleButtonsContainer>
+          <ModalYesButton onPress={() => {
+            handleCharacterDeletion();
+          }}
+          >
+            <ModalButtonText>
+              Yes
+            </ModalButtonText>
+          </ModalYesButton>
+          <ModalNoButton onPress={() => {
+            setIsCharacterDeletionModalOpen(false);
+          }}
+          >
+            <ModalButtonText>
+              No
+            </ModalButtonText>
+          </ModalNoButton>
+        </ModalDoubleButtonsContainer>
+      </ModalContainer>
+    </Backdrop>
+  );
+
+  const renderEditBox = () => (
+    <Backdrop>
+      <ModalContainer>
+        <ModalCloseButtonContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+            }}
+          >
+            <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+          </TouchableOpacity>
+        </ModalCloseButtonContainer>
+        <EditBoxContainer>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+              setIsEditCharacterNameModalOpen(true);
+            }}
+          >
+            <EditBoxText>Edit character name</EditBoxText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setisEditBoxOpen(false);
+              setIsCharacterDeletionModalOpen(true);
+            }}
+          >
+            <EditBoxText>Delete character</EditBoxText>
+          </TouchableOpacity>
+        </EditBoxContainer>
+      </ModalContainer>
+    </Backdrop>
+  );
+
+  const renderEditCharacterNameModal = () => (
+    <Backdrop>
+      <StyledKeyboardAvoidingView>
+        <ModalContainer>
+          <ModalCloseButtonContainer>
+            <TouchableOpacity
+              onPress={() => {
+                setIsEditCharacterNameModalOpen(false);
+              }}
+            >
+              <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+            </TouchableOpacity>
+          </ModalCloseButtonContainer>
+          <ModalText>Insert new character name:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewCharacterName(value)}
+            placeholder="New character name"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            autoCorrect={false}
+          />
+          <ModalDoubleButtonsContainer>
+            <ModalYesButton onPress={() => {
+              handleEditCharacterName();
+            }}
+            >
+              <ModalButtonText>
+                Confirm
+              </ModalButtonText>
+            </ModalYesButton>
+            <ModalNoButton onPress={() => {
+              setIsEditCharacterNameModalOpen(false);
+            }}
+            >
+              <ModalButtonText>
+                Cancel
+              </ModalButtonText>
+            </ModalNoButton>
+          </ModalDoubleButtonsContainer>
+        </ModalContainer>
+      </StyledKeyboardAvoidingView>
+    </Backdrop>
+  );
+
   const renderModal = () => {
     if (isAddRollModalOpen) {
       return renderAddRollModal();
     }
 
-    if (isDeletionModalOpen) {
-      return renderDeletionModal();
+    if (isCharacterDeletionModalOpen) {
+      return renderCharacterDeletionModal();
+    }
+
+    if (isRollDeletionModalOpen) {
+      return renderRollDeletionModal();
+    }
+
+    if (isEditBoxOpen) {
+      return renderEditBox();
+    }
+
+    if (isEditCharacterNameModalOpen) {
+      return renderEditCharacterNameModal();
     }
 
     return null;
@@ -266,16 +432,16 @@ const Character: React.FC = () => {
           <MaterialCommunityIcons size={30} name="chevron-left" color={colors.grey} />
         </TouchableOpacity>
         <CharacterName>{currentCharacter.name}</CharacterName>
-        <DeleteButton onPress={() => { setIsDeletionModalOpen(true); }}>
-          <MaterialCommunityIcons size={30} name="trash-can-outline" color={colors.white} />
-        </DeleteButton>
+        <EditButton onPress={() => { setisEditBoxOpen(true); }}>
+          <MaterialCommunityIcons size={30} name="dots-vertical" color={colors.grey} />
+        </EditButton>
       </CharacterHeaderContainer>
       <CharacterContainerBottomLine />
       {renderRolls()}
       <AddRollButton onPress={() => { setIsAddRollModalOpen(true); }}>
         <AddRollText>Add Roll</AddRollText>
       </AddRollButton>
-      {isAddRollModalOpen || isDeletionModalOpen ? renderModal() : null}
+      {renderModal()}
     </CharacterScreenContainer>
   );
 };

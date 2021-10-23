@@ -138,8 +138,7 @@ export const CharacterHeaderContainer = styled.View`
   margin: 30px;
 `;
 
-export const DeleteButton = styled.TouchableOpacity`
-  background-color: ${colors.red};
+export const EditButton = styled.TouchableOpacity`
   height: 48px;
   width: 48px;
   border-radius: 24px;
@@ -169,7 +168,6 @@ export const ModalDoubleButtonsContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  margin: 30px;
 `;
 
 export const RollContainer = styled.View`
@@ -261,7 +259,7 @@ export const ModalYesButton = styled.TouchableOpacity`
   background-color: ${colors.blue};
   padding: 10px;
   border-radius: 20px;
-  width: 60px;
+  min-width: 60px;
   align-items: center;
   justify-content: center;
 `;
@@ -271,7 +269,7 @@ export const ModalNoButton = styled.TouchableOpacity`
   background-color: ${colors.red};
   padding: 10px;
   border-radius: 20px;
-  width: 60px;
+  min-width: 60px;
   align-items: center;
   justify-content: center;
 `;
@@ -280,4 +278,19 @@ export const RedText = styled.Text`
   font-size: 18px;
   color: ${colors.red};
   margin-top: 10px;
+`;
+
+export const EditBoxContainer = styled.View`
+  width: 100%;
+  align-items: flex-start;
+`;
+
+export const EditBoxText = styled.Text`
+  font-size: 22px;
+  color: ${colors.grey};
+  margin-bottom: 10px;
+`;
+
+export const MarginView = styled.View`
+  height: 30px;
 `;
