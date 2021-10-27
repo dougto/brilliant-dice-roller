@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useIsFocused } from '@react-navigation/native';
 
 import colors from '../../constants/Colors';
 import { useHistory, IHistoryItem } from '../../hooks/History';
@@ -35,13 +34,7 @@ import {
 const History: React.FC = () => {
   const { history, clearHistory } = useHistory();
 
-  const isFocused = useIsFocused();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  if (!isFocused) {
-    return null;
-  }
 
   const onClearHistoryPress = () => {
     setIsModalOpen(true);
