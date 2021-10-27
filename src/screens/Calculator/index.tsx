@@ -60,7 +60,11 @@ const Calculator: React.FC = () => {
 
   return (
     <Container>
-      <ScrollView style={{ width: '100%' }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+      <ScrollView
+        style={{ width: '100%' }}
+        contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}
+        bounces={false}
+      >
         <ResultText small={isSmallDevice}>{result}</ResultText>
         <ExpressionContainer small={isSmallDevice}>
           <ExpressionText>{expressionToShow}</ExpressionText>

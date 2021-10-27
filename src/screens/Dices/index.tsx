@@ -96,7 +96,11 @@ const Dices: React.FC = () => {
 
   return (
     <Container>
-      <ScrollView style={{ width: '100%' }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+      <ScrollView
+        style={{ width: '100%' }}
+        contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}
+        bounces={false}
+      >
         <ResultsSumText small={isSmallDevice}>{resultsSum}</ResultsSumText>
         <ResultsContainer small={isSmallDevice}>
           <ResultsText>{renderLastResults()}</ResultsText>
