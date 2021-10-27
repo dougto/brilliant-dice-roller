@@ -13,6 +13,18 @@ interface IResultTextProps {
   small: boolean;
 }
 
+interface IButtonContainerProps {
+  small: boolean;
+}
+
+interface IRowProps {
+  small: boolean;
+}
+
+interface IEvaluateButtonProps {
+  small: boolean;
+}
+
 export const Container = styled.View`
   display: flex;
   flex-direction: column;
@@ -41,20 +53,20 @@ export const ExpressionText = styled.Text`
   color: ${colors.grey};
 `;
 
-export const ButtonsContainer = styled.View`
+export const ButtonsContainer = styled.View<IButtonContainerProps>`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 24px;
+  margin-top: ${(props) => (props.small ? 12 : 24)}px;
 `;
 
-export const Row = styled.View`
+export const Row = styled.View<IRowProps>`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
   width: 100%;
   min-height: 40px;
-  margin: 16px;
+  margin: ${(props) => (props.small ? 8 : 16)}px;
 `;
 
 export const Button = styled.TouchableOpacity`
@@ -76,12 +88,12 @@ export const ButtonText = styled.Text`
   color: ${colors.white};
 `;
 
-export const EvaluateButton = styled.TouchableOpacity`
+export const EvaluateButton = styled.TouchableOpacity<IEvaluateButtonProps>`
   align-items: center;
   justify-content: center;
-  height: 60px;
-  width: 60px;
-  border-radius: 30px;
+  height: ${(props) => (props.small ? 48 : 60)}px;
+  width: ${(props) => (props.small ? 48 : 60)}px;
+  border-radius: ${(props) => (props.small ? 24 : 30)}px;
   background-color: ${colors.blue};
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
@@ -93,7 +105,7 @@ export const ClearButton = styled.TouchableOpacity<IMediaSize>`
   width: 60%;
   align-items: center;
   justify-content: center;
-  margin-top: ${(props) => (props.small ? 24 : 48)}px;
+  margin-top: ${(props) => (props.small ? 0 : 48)}px;
 `;
 
 export const ClearText = styled.Text<IMediaSize>`

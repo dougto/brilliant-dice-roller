@@ -148,6 +148,11 @@ const Character: React.FC = () => {
       return;
     }
 
+    const rollIndex = currentCharacter.rolls.map((roll) => roll.name).indexOf(rollName);
+    const newRollResults = [...rollResults];
+    newRollResults.splice(rollIndex, 1);
+    setRollResults(newRollResults);
+
     const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter((roll) => roll.name != rollName);
     const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...updatedRolls] };
 
@@ -262,6 +267,7 @@ const Character: React.FC = () => {
             '?
           </ModalText>
         </ModalRow>
+        <MarginView />
         <ModalDoubleButtonsContainer>
           <ModalYesButton onPress={() => {
             handleRollDeletion(selectedRoll.name);
