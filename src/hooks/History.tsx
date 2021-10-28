@@ -1,5 +1,5 @@
 import React, {
-  createContext, useState, useContext, useCallback, useEffect,
+  createContext, useState, useContext, useCallback, useEffect, useMemo,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -61,13 +61,21 @@ const HistoryProvider: React.FC = ({ children }) => {
     AsyncStorage.setItem('@bdr:history', JSON.stringify([]));
   }, []);
 
+  const value = useMemo(() => (
+    {
+      history,
+      addHistoryItem,
+      clearHistory,
+    }
+  ), [
+    history,
+    addHistoryItem,
+    clearHistory,
+  ]);
+
   return (
     <HistoryContext.Provider
-      value={{
-        history,
-        addHistoryItem,
-        clearHistory,
-      }}
+      value={value}
     >
       {children}
     </HistoryContext.Provider>

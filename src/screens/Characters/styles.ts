@@ -171,6 +171,7 @@ export const ModalDoubleButtonsContainer = styled.View`
 `;
 
 export const RollContainer = styled.View`
+  width: 100%;
   flex-direction: row;
   padding: 20px;
   align-items: center;

@@ -45,6 +45,7 @@ export default function BottomTabNavigator() {
         component={History}
         options={{
           tabBarIcon: ({ color }) => <MaterialCommunityIcons size={30} name="history" color={color} />,
+          unmountOnBlur: true,
         }}
       />
     </BottomTab.Navigator>

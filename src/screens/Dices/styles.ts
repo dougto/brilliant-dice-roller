@@ -23,7 +23,8 @@ export const ResultsContainer = styled.View<IMediaSize>`
   border: 2px solid ${colors.grey};
   border-radius: 20px;
   height: 48px;
-  width: 80%;
+  min-width: 80%;
+  padding: 0 4px 0 4px;
   align-items: center;
   justify-content: center;
 `;
