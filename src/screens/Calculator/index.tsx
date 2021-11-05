@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { ScrollView } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import colors from '../../constants/Colors';
 import { EvalDiceExpression, isDiceExpressionValid } from '../../helpers/Math';
 import { useHistory } from '../../hooks/History';
 import {
@@ -12,6 +14,7 @@ import {
   ButtonsContainer,
   Row,
   Button,
+  BackButton,
   ButtonText,
   EvaluateButton,
   ClearButton,
@@ -34,6 +37,15 @@ const Calculator: React.FC = () => {
       setExpression(newExpression);
       setExpressionToShow(newExpression.replace(/\//g, '÷').replace(/\*/g, 'x'));
     }
+  };
+
+  const eraseLastExpressionCharacter = () => {
+    if (expression === '') return;
+
+    const newExpression = expression.slice(0, -1);
+
+    setExpression(newExpression);
+    setExpressionToShow(newExpression);
   };
 
   const clearExpression = () => {
@@ -124,9 +136,9 @@ const Calculator: React.FC = () => {
               </Button>
             </GridContainer>
             <GridContainer>
-              <Button onPress={() => { updateExpressions('/'); }} disabled={!isDiceExpressionValid(`${expression}/1`)}>
-                <ButtonText>÷</ButtonText>
-              </Button>
+              <BackButton onPress={eraseLastExpressionCharacter}>
+                <MaterialCommunityIcons size={20} name="arrow-left-thick" color={colors.white} />
+              </BackButton>
             </GridContainer>
             <GridContainer>
               <EvaluateButton small={isSmallDevice} onPress={() => { evaluateExpression(); }} disabled={!isDiceExpressionValid(expression)}>

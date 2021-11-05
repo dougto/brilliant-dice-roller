@@ -233,6 +233,7 @@ const Character: React.FC = () => {
             autoCorrect={false}
           />
           <ModalText>Insert new roll expression:</ModalText>
+          <ModalText>(example: 2d8+5)</ModalText>
           <ModalInput
             onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
             placeholder="Roll expression"

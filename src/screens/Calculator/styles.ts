@@ -74,7 +74,18 @@ export const Button = styled.TouchableOpacity`
   border-radius: 4px;
   padding: 4px 16px 4px 16px;
   min-width: 44px;
+  height: 36px;
+  justify-content: center;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  background-color: ${colors.orange};
+  border-radius: 4px;
+  padding: 4px 16px 4px 16px;
+  min-width: 44px;
+  height: 36px;
+  justify-content: center;
 `;
 
 export const GridContainer = styled.View`
