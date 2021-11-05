@@ -26,7 +26,8 @@
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "bdr.app"
+      "package": "bdr.app",
+      "permissions": []
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
