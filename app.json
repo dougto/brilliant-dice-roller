@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "brilliant-dice-roller",
+    "name": "Brilliant Dice Roller",
     "slug": "brilliant-dice-roller",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
@@ -22,6 +22,7 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

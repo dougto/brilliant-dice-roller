@@ -1,6 +1,11 @@
 import styled from 'styled-components/native';
 import colors from '../../constants/Colors';
 
+interface RollResultTextProps {
+  isMax: boolean;
+  isMin: boolean;
+}
+
 export const Container = styled.View`
   position: relative;
   display: flex;
@@ -190,6 +195,7 @@ export const RollContentColumn = styled.View`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  flex: 0.8;
 `;
 
 export const RollName = styled.Text`
@@ -231,9 +237,9 @@ export const RollOutsideContainer = styled.View`
   align-items: center;
 `;
 
-export const RollResultText = styled.Text`
+export const RollResultText = styled.Text<RollResultTextProps>`
   font-size: 30px;
-  color: ${colors.grey};
+  color: ${({ isMax, isMin }) => (isMax ? colors.green : isMin ? colors.red : colors.grey)};
   margin-bottom: 10px;
 `;
 
@@ -241,6 +247,7 @@ export const RollResultContainer = styled.View`
   align-items: center;
   justify-content: flex-end;
   height: 80px;
+  flex: 0.2;
 `;
 
 export const ModalCloseButtonContainer = styled.View`

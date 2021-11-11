@@ -30,6 +30,8 @@ const Calculator: React.FC = () => {
   const [result, setResult] = useState('0');
   const [expression, setExpression] = useState('');
   const [expressionToShow, setExpressionToShow] = useState('');
+  const [isMaxValue, setIsMaxValue] = useState<boolean>(false);
+  const [isMinValue, setIsMinValue] = useState<boolean>(false);
 
   const updateExpressions = (newCharacter: string) => {
     if (expression.length < ExpressionMaxSize) {
@@ -49,13 +51,18 @@ const Calculator: React.FC = () => {
   };
 
   const clearExpression = () => {
+    setIsMaxValue(false);
+    setIsMinValue(false);
     setExpression('');
     setExpressionToShow('');
     setResult('0');
   };
 
   const evaluateExpression = () => {
-    const expressionResult = EvalDiceExpression(expression);
+    const [expressionResult, max, min] = EvalDiceExpression(expression);
+
+    setIsMaxValue(max === expressionResult);
+    setIsMinValue(min === expressionResult);
 
     setResult(`${expressionResult}`);
 
@@ -77,7 +84,7 @@ const Calculator: React.FC = () => {
         contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}
         bounces={false}
       >
-        <ResultText small={isSmallDevice}>{result}</ResultText>
+        <ResultText isMax={isMaxValue} isMin={isMinValue} small={isSmallDevice}>{result}</ResultText>
         <ExpressionContainer small={isSmallDevice}>
           <ExpressionText>{expressionToShow}</ExpressionText>
         </ExpressionContainer>

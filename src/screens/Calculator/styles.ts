@@ -11,6 +11,8 @@ interface IExpressionContainerProps {
 
 interface IResultTextProps {
   small: boolean;
+  isMax: boolean;
+  isMin: boolean;
 }
 
 interface IButtonContainerProps {
@@ -35,7 +37,7 @@ export const Container = styled.View`
 
 export const ResultText = styled.Text<IResultTextProps>`
   font-size: ${(props) => (props.small ? 50 : 80)}px;
-  color: ${colors.grey};
+  color: ${({ isMax, isMin }) => (isMax ? colors.green : isMin ? colors.red : colors.grey)};
 `;
 
 export const ExpressionContainer = styled.View<IExpressionContainerProps>`
@@ -76,7 +78,7 @@ export const Button = styled.TouchableOpacity`
   min-width: 44px;
   height: 36px;
   justify-content: center;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
 `;
 
 export const BackButton = styled.TouchableOpacity`
@@ -106,7 +108,7 @@ export const EvaluateButton = styled.TouchableOpacity<IEvaluateButtonProps>`
   width: ${(props) => (props.small ? 48 : 60)}px;
   border-radius: ${(props) => (props.small ? 24 : 30)}px;
   background-color: ${colors.blue};
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
 `;
 
 export const ClearButton = styled.TouchableOpacity<IMediaSize>`

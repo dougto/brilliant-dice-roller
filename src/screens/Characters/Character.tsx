@@ -67,6 +67,8 @@ const Character: React.FC = () => {
   const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
   const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
   const [rollResults, setRollResults] = useState<number[]>([]);
+  const [isMaxValue, setIsMaxValue] = useState<boolean[]>([]);
+  const [isMinValue, setIsMinValue] = useState<boolean[]>([]);
 
   const navigation = useNavigation();
 
@@ -129,7 +131,15 @@ const Character: React.FC = () => {
   };
 
   const handleRoll = (expression: string, name: string, index: number) => {
-    const result = EvalDiceExpression(expression);
+    const [result, max, min] = EvalDiceExpression(expression);
+
+    const newIsMaxValue = [...isMaxValue];
+    newIsMaxValue[index] = max === result;
+    setIsMaxValue([...newIsMaxValue]);
+
+    const newIsMinValue = [...isMinValue];
+    newIsMinValue[index] = min === result;
+    setIsMinValue([...newIsMinValue]);
 
     const newRollResults = [...rollResults];
     newRollResults[index] = result;
@@ -183,7 +193,9 @@ const Character: React.FC = () => {
             </TouchableOpacity>
           </RollContentColumn>
           <RollResultContainer>
-            <RollResultText>{rollResults[index]}</RollResultText>
+            <RollResultText isMax={isMaxValue[index]} isMin={isMinValue[index]}>
+              {rollResults[index]}
+            </RollResultText>
             <RollButton onPress={() => { handleRoll(roll.expression, roll.name, index); }}>
               <RollButtonText>Roll</RollButtonText>
             </RollButton>
