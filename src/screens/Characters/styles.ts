@@ -95,6 +95,10 @@ export const ModalRow = styled.View`
   justify-content: space-between;
 `;
 
+export const ModifyRollsButtonsContainer = styled.View`
+  flex-direction: row;
+`;
+
 export const ModalInput = styled.TextInput`
   width: 100%;
   margin: 30px 0 40px 0;
@@ -286,6 +290,13 @@ export const RedText = styled.Text`
   font-size: 18px;
   color: ${colors.red};
   margin-top: 10px;
+`;
+
+export const BlueText = styled.Text`
+  font-size: 18px;
+  color: ${colors.blue};
+  margin-top: 10px;
+  margin-left: 18px;
 `;
 
 export const EditBoxContainer = styled.View`
