@@ -26,6 +26,7 @@
         }
     },
     "rules": {
+        "no-nested-ternary": "off",
         "operator-assignment": "off",
         "react/no-unescaped-entities": "off",
         "global-require": "off",

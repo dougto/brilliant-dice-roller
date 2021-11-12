@@ -1,6 +1,11 @@
 import styled from 'styled-components/native';
 import colors from '../../constants/Colors';
 
+interface RollResultTextProps {
+  isMax: boolean;
+  isMin: boolean;
+}
+
 export const Container = styled.View`
   position: relative;
   display: flex;
@@ -88,6 +93,10 @@ export const ModalRow = styled.View`
   width: 100%;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const ModifyRollsButtonsContainer = styled.View`
+  flex-direction: row;
 `;
 
 export const ModalInput = styled.TextInput`
@@ -190,6 +199,7 @@ export const RollContentColumn = styled.View`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  flex: 0.8;
 `;
 
 export const RollName = styled.Text`
@@ -231,9 +241,9 @@ export const RollOutsideContainer = styled.View`
   align-items: center;
 `;
 
-export const RollResultText = styled.Text`
+export const RollResultText = styled.Text<RollResultTextProps>`
   font-size: 30px;
-  color: ${colors.grey};
+  color: ${({ isMax, isMin }) => (isMax ? colors.green : isMin ? colors.red : colors.grey)};
   margin-bottom: 10px;
 `;
 
@@ -241,6 +251,7 @@ export const RollResultContainer = styled.View`
   align-items: center;
   justify-content: flex-end;
   height: 80px;
+  flex: 0.2;
 `;
 
 export const ModalCloseButtonContainer = styled.View`
@@ -279,6 +290,13 @@ export const RedText = styled.Text`
   font-size: 18px;
   color: ${colors.red};
   margin-top: 10px;
+`;
+
+export const BlueText = styled.Text`
+  font-size: 18px;
+  color: ${colors.blue};
+  margin-top: 10px;
+  margin-left: 18px;
 `;
 
 export const EditBoxContainer = styled.View`

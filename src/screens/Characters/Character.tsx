@@ -43,6 +43,8 @@ import {
   ModalYesButton,
   ModalNoButton,
   RedText,
+  BlueText,
+  ModifyRollsButtonsContainer,
   EditBoxContainer,
   EditBoxText,
   MarginView,
@@ -65,8 +67,11 @@ const Character: React.FC = () => {
   const [isAddRollModalOpen, setIsAddRollModalOpen] = useState(false);
   const [selectedRoll, setSelectedRoll] = useState<ICharacterRoll>({} as ICharacterRoll);
   const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
+  const [isEditRollModalOpen, setIsEditRollModalOpen] = useState(false);
   const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
   const [rollResults, setRollResults] = useState<number[]>([]);
+  const [isMaxValue, setIsMaxValue] = useState<boolean[]>([]);
+  const [isMinValue, setIsMinValue] = useState<boolean[]>([]);
 
   const navigation = useNavigation();
 
@@ -129,7 +134,15 @@ const Character: React.FC = () => {
   };
 
   const handleRoll = (expression: string, name: string, index: number) => {
-    const result = EvalDiceExpression(expression);
+    const [result, max, min] = EvalDiceExpression(expression);
+
+    const newIsMaxValue = [...isMaxValue];
+    newIsMaxValue[index] = max === result;
+    setIsMaxValue([...newIsMaxValue]);
+
+    const newIsMinValue = [...isMinValue];
+    newIsMinValue[index] = min === result;
+    setIsMinValue([...newIsMinValue]);
 
     const newRollResults = [...rollResults];
     newRollResults[index] = result;
@@ -169,6 +182,46 @@ const Character: React.FC = () => {
     setCurrentCharacter(updatedCharacter);
   };
 
+  const handleEditRoll = async () => {
+    if (!isDiceExpressionValid(newRoll.expression || selectedRoll.expression)) {
+      setSelectedRoll({} as ICharacterRoll);
+      Alert.alert('Invalid expression');
+      return;
+    }
+
+    const rollExists = currentCharacter.rolls.some((roll) => roll.name === newRoll.name);
+    if (rollExists) {
+      setSelectedRoll({} as ICharacterRoll);
+      Alert.alert('Roll already exists');
+      return;
+    }
+
+    const rollIndex = currentCharacter.rolls.map((roll) => roll.name).indexOf(selectedRoll.name);
+
+    const updatedRoll = {
+      name: newRoll.name || selectedRoll.name,
+      expression: newRoll.expression || selectedRoll.expression,
+    };
+
+    const updatedCharacter: ICharacter = { ...currentCharacter };
+    updatedCharacter.rolls[rollIndex] = { ...updatedRoll };
+
+    const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
+    const newCharactersSet = characters.map((char) => {
+      if (char.name === updatedCharacter.name) {
+        return updatedCharacter;
+      }
+      return char;
+    });
+
+    await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
+
+    setCurrentCharacter(updatedCharacter);
+    setSelectedRoll({} as ICharacterRoll);
+    setNewRoll({ name: '', expression: '' });
+    setIsEditRollModalOpen(false);
+  };
+
   const renderRoll = ({ item: roll, index }: { item: ICharacterRoll, index: number}) => (
     <RollOutsideContainer>
       <RollContainer>
@@ -176,14 +229,23 @@ const Character: React.FC = () => {
           <RollContentColumn>
             <RollName>{roll.name}</RollName>
             <RollExpression>{roll.expression}</RollExpression>
-            <TouchableOpacity
-              onPress={() => { setSelectedRoll(roll); setIsRollDeletionModalOpen(true); }}
-            >
-              <RedText>delete</RedText>
-            </TouchableOpacity>
+            <ModifyRollsButtonsContainer>
+              <TouchableOpacity
+                onPress={() => { setSelectedRoll(roll); setIsRollDeletionModalOpen(true); }}
+              >
+                <RedText>delete</RedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { setSelectedRoll(roll); setIsEditRollModalOpen(true); }}
+              >
+                <BlueText>edit</BlueText>
+              </TouchableOpacity>
+            </ModifyRollsButtonsContainer>
           </RollContentColumn>
           <RollResultContainer>
-            <RollResultText>{rollResults[index]}</RollResultText>
+            <RollResultText isMax={isMaxValue[index]} isMin={isMinValue[index]}>
+              {rollResults[index]}
+            </RollResultText>
             <RollButton onPress={() => { handleRoll(roll.expression, roll.name, index); }}>
               <RollButtonText>Roll</RollButtonText>
             </RollButton>
@@ -243,6 +305,47 @@ const Character: React.FC = () => {
           />
           <ModalButton onPress={handleAddRoll}>
             <ModalButtonText>Add Roll</ModalButtonText>
+          </ModalButton>
+        </ModalContainer>
+      </StyledKeyboardAvoidingView>
+    </Backdrop>
+  );
+
+  const renderEditRollModal = () => (
+    <Backdrop>
+      <StyledKeyboardAvoidingView>
+        <ModalContainer>
+          <ModalCloseButtonContainer>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedRoll({} as ICharacterRoll);
+                setNewRoll({ name: '', expression: '' });
+                setIsEditRollModalOpen(false);
+              }}
+            >
+              <MaterialCommunityIcons size={30} name="close" color={colors.grey} />
+            </TouchableOpacity>
+          </ModalCloseButtonContainer>
+          <ModalText>New roll name:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewRoll({ ...newRoll, name: value })}
+            placeholder="Roll name"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            defaultValue={selectedRoll.name}
+            autoCorrect={false}
+          />
+          <ModalText>Insert new roll expression:</ModalText>
+          <ModalInput
+            onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
+            placeholder="Roll expression"
+            autoCapitalize="none"
+            autoCompleteType="off"
+            defaultValue={selectedRoll.expression}
+            autoCorrect={false}
+          />
+          <ModalButton onPress={handleEditRoll}>
+            <ModalButtonText>Save roll</ModalButtonText>
           </ModalButton>
         </ModalContainer>
       </StyledKeyboardAvoidingView>
@@ -427,6 +530,10 @@ const Character: React.FC = () => {
 
     if (isEditCharacterNameModalOpen) {
       return renderEditCharacterNameModal();
+    }
+
+    if (isEditRollModalOpen) {
+      return renderEditRollModal();
     }
 
     return null;
