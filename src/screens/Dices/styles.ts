@@ -106,6 +106,6 @@ export const Dice100View = styled.View`
 
 export const Dice100Text = styled.Text<Dice100TextProps>`
   font-size: ${({ isSmallDevice }) => (isSmallDevice ? 18 : 25)}px;
-  color: ${colors.white};
+  color: ${colors.extraLightGrey};
   font-weight: bold;
 `;
