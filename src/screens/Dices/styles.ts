@@ -5,6 +5,10 @@ interface IMediaSize {
   small: boolean;
 }
 
+interface Dice100TextProps {
+  isSmallDevice: boolean;
+}
+
 export const Container = styled.View`
   display: flex;
   flex-direction: column;
@@ -54,6 +58,12 @@ export const DiceContainer = styled.TouchableOpacity`
   position: relative;
 `;
 
+export const DiceContainerWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const ClearButton = styled.TouchableOpacity<IMediaSize>`
   border: 2px solid ${colors.grey};
   border-radius: 20px;
@@ -84,4 +94,18 @@ export const DiceCounterText = styled.Text`
   font-weight: bold;
   color: ${colors.white};
   margin: auto;
+`;
+
+export const Dice100View = styled.View`
+  background-color: ${colors.grey};
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 12px 12px 12px;
+`;
+
+export const Dice100Text = styled.Text<Dice100TextProps>`
+  font-size: ${({ isSmallDevice }) => (isSmallDevice ? 18 : 25)}px;
+  color: ${colors.white};
+  font-weight: bold;
 `;

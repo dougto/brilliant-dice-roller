@@ -74,19 +74,20 @@ export const Row = styled.View<IRowProps>`
 export const Button = styled.TouchableOpacity`
   background-color: ${colors.grey};
   border-radius: 4px;
-  padding: 4px 16px 4px 16px;
   min-width: 44px;
   height: 36px;
   justify-content: center;
+  align-items: center;
   opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
 `;
 
 export const BackButton = styled.TouchableOpacity`
   background-color: ${colors.orange};
   border-radius: 4px;
-  padding: 4px 16px 4px 16px;
   min-width: 44px;
   height: 36px;
+  justify-content: center;
+  align-items: center;
   justify-content: center;
 `;
 
