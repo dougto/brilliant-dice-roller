@@ -95,6 +95,11 @@ const Character: React.FC = () => {
   });
 
   const handleAddRoll = async () => {
+    if (!newRoll.name) {
+      Alert.alert('Insert a name');
+      return;
+    }
+
     if (!isDiceExpressionValid(newRoll.expression)) {
       Alert.alert('Invalid expression');
       return;
