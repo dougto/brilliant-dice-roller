@@ -26,6 +26,7 @@ import {
 } from './styles';
 
 export interface ICharacterRoll {
+  id: string;
   name: string;
   expression: string;
 }

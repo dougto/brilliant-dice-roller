@@ -81,7 +81,7 @@ const Character: React.FC = () => {
   const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
   const [isEditRollModalOpen, setIsEditRollModalOpen] = useState(false);
   const [isSelectExpressionModalOpen, setIsSelectExpressionModalOpen] = useState(false);
-  const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
+  const [newRoll, setNewRoll] = useState<ICharacterRoll>({ id: '', name: '', expression: '' });
   const [rollResults, setRollResults] = useState<number[]>([]);
   const [isMaxValue, setIsMaxValue] = useState<boolean[]>([]);
   const [isMinValue, setIsMinValue] = useState<boolean[]>([]);
@@ -105,17 +105,13 @@ const Character: React.FC = () => {
       return;
     }
 
-    const rollExists = currentCharacter.rolls.some((roll) => roll.name === newRoll.name);
-    if (rollExists) {
-      Alert.alert('Roll already exists');
-      return;
-    }
+    const newRollId = `${newRoll.name}-${(new Date()).getTime()}`;
 
-    const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...currentCharacter.rolls, newRoll] };
+    const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...currentCharacter.rolls, { ...newRoll, id: newRollId }] };
 
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.map((char) => {
-      if (char.name === updatedCharacter.name) {
+      if (char.id === updatedCharacter.id) {
         return updatedCharacter;
       }
       return char;
@@ -129,7 +125,7 @@ const Character: React.FC = () => {
     setEditableExpression('');
     setEditableExpressionToShow('');
 
-    setNewRoll({ name: '', expression: '' });
+    setNewRoll({ id: '', name: '', expression: '' });
   };
 
   const handleEditCharacterName = async () => {
@@ -144,7 +140,7 @@ const Character: React.FC = () => {
     };
 
     const storedCharacters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
-    const filteredCharacters = storedCharacters.filter((char) => char.name != currentCharacter.name);
+    const filteredCharacters = storedCharacters.filter((char) => char.id != currentCharacter.id);
     const newCharactersSet = [updatedCharacter, ...filteredCharacters];
 
     await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
@@ -155,7 +151,7 @@ const Character: React.FC = () => {
 
   const handleCharacterDeletion = async () => {
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
-    const newCharactersSet = characters.filter((char) => char.name != currentCharacter.name);
+    const newCharactersSet = characters.filter((char) => char.id != currentCharacter.id);
 
     await AsyncStorage.setItem('@bdr:characters', JSON.stringify(newCharactersSet) || '');
 
@@ -185,22 +181,22 @@ const Character: React.FC = () => {
     });
   };
 
-  const handleRollDeletion = async (rollName: string) => {
-    if (!rollName) {
+  const handleRollDeletion = async (rollId: string) => {
+    if (!rollId) {
       return;
     }
 
-    const rollIndex = currentCharacter.rolls.map((roll) => roll.name).indexOf(rollName);
+    const rollIndex = currentCharacter.rolls.map((roll) => roll.id).indexOf(rollId);
     const newRollResults = [...rollResults];
     newRollResults.splice(rollIndex, 1);
     setRollResults(newRollResults);
 
-    const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter((roll) => roll.name != rollName);
+    const updatedRolls: ICharacterRoll[] = currentCharacter.rolls.filter((roll) => roll.id != rollId);
     const updatedCharacter: ICharacter = { ...currentCharacter, rolls: [...updatedRolls] };
 
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.map((char) => {
-      if (char.name === updatedCharacter.name) {
+      if (char.id === updatedCharacter.id) {
         return updatedCharacter;
       }
       return char;
@@ -218,16 +214,17 @@ const Character: React.FC = () => {
       return;
     }
 
-    const rollExists = currentCharacter.rolls.some((roll) => roll.name === newRoll.name);
+    const rollExists = currentCharacter.rolls.some((roll) => roll.id === newRoll.id);
     if (rollExists) {
       setSelectedRoll({} as ICharacterRoll);
       Alert.alert('Roll already exists');
       return;
     }
 
-    const rollIndex = currentCharacter.rolls.map((roll) => roll.name).indexOf(selectedRoll.name);
+    const rollIndex = currentCharacter.rolls.map((roll) => roll.id).indexOf(selectedRoll.id);
 
     const updatedRoll = {
+      id: selectedRoll.id,
       name: newRoll.name || selectedRoll.name,
       expression: newRoll.expression || selectedRoll.expression,
     };
@@ -237,7 +234,7 @@ const Character: React.FC = () => {
 
     const characters = JSON.parse(await AsyncStorage.getItem('@bdr:characters') as string) as ICharacter[];
     const newCharactersSet = characters.map((char) => {
-      if (char.name === updatedCharacter.name) {
+      if (char.id === updatedCharacter.id) {
         return updatedCharacter;
       }
       return char;
@@ -247,7 +244,7 @@ const Character: React.FC = () => {
 
     setCurrentCharacter(updatedCharacter);
     setSelectedRoll({} as ICharacterRoll);
-    setNewRoll({ name: '', expression: '' });
+    setNewRoll({ id: '', name: '', expression: '' });
     setIsEditRollModalOpen(false);
 
     setEditableExpression('');
@@ -312,7 +309,7 @@ const Character: React.FC = () => {
           style={{ width: '100%' }}
           data={currentCharacter.rolls}
           renderItem={renderRoll}
-          keyExtractor={({ name }) => name}
+          keyExtractor={({ id }) => id}
           ListFooterComponent={<View style={{ marginBottom: 100 }} />}
         />
       );
@@ -328,7 +325,7 @@ const Character: React.FC = () => {
           <ModalCloseButtonContainer>
             <TouchableOpacity
               onPress={() => {
-                setNewRoll({ name: '', expression: '' });
+                setNewRoll({ id: '', name: '', expression: '' });
                 setEditableExpression('');
                 setEditableExpressionToShow('');
                 setIsAddRollModalOpen(false);
@@ -464,7 +461,7 @@ const Character: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setSelectedRoll({} as ICharacterRoll);
-                setNewRoll({ name: '', expression: '' });
+                setNewRoll({ id: '', name: '', expression: '' });
                 setIsEditRollModalOpen(false);
               }}
             >
@@ -521,7 +518,7 @@ const Character: React.FC = () => {
         <MarginView />
         <ModalDoubleButtonsContainer>
           <ModalYesButton onPress={() => {
-            handleRollDeletion(selectedRoll.name);
+            handleRollDeletion(selectedRoll.id);
             setIsRollDeletionModalOpen(false);
           }}
           >

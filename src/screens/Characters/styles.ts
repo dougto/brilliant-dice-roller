@@ -117,7 +117,7 @@ export const ModalInput = styled.TextInput`
 export const ModalButton = styled.TouchableOpacity`
   background-color: ${colors.blue};
   border-radius: 8px;
-  padding: 8px;
+  padding: 0 10px 0 10px;
   height: 40px;
   width: 60%;
   border-radius: 20px;
@@ -128,9 +128,8 @@ export const ModalButton = styled.TouchableOpacity`
 export const ModalYellowButton = styled.TouchableOpacity`
   background-color: ${colors.orange};
   border-radius: 8px;
-  padding: 8px;
+  padding: 0 10px 0 10px;
   height: 40px;
-  width: 60%;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
@@ -201,7 +200,7 @@ export const ModalDoubleButtonsContainer = styled.View`
 export const RollContainer = styled.View`
   width: 100%;
   flex-direction: row;
-  padding: 20px;
+  padding: 20px 0 20px 20px;
   align-items: center;
   justify-content: space-between;
 `;
@@ -270,7 +269,7 @@ export const RollResultContainer = styled.View`
   align-items: center;
   justify-content: flex-end;
   height: 80px;
-  flex: 0.2;
+  flex: 0.3;
 `;
 
 export const ModalCloseButtonContainer = styled.View`
@@ -288,7 +287,7 @@ export const StyledKeyboardAvoidingView = styled.KeyboardAvoidingView`
 export const ModalYesButton = styled.TouchableOpacity`
   height: 40px;
   background-color: ${colors.blue};
-  padding: 10px;
+  padding: 0 10px 0 10px;
   border-radius: 20px;
   min-width: 60px;
   align-items: center;
@@ -299,7 +298,7 @@ export const ModalYesButton = styled.TouchableOpacity`
 export const ModalNoButton = styled.TouchableOpacity`
   height: 40px;
   background-color: ${colors.red};
-  padding: 10px;
+  padding: 0 10px 0 10px;
   border-radius: 20px;
   min-width: 60px;
   align-items: center;
@@ -370,7 +369,6 @@ export const BackButton = styled.TouchableOpacity`
   border-radius: 4px;
   min-width: 44px;
   height: 36px;
-  justify-content: center;
   align-items: center;
   justify-content: center;
 `;

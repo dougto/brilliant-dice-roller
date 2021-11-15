@@ -145,7 +145,7 @@ export const ModalButtonsContainer = styled.View`
 export const ModalYesButton = styled.TouchableOpacity`
   height: 40px;
   background-color: ${colors.blue};
-  padding: 10px;
+  padding: 0 10px 0 10px;
   border-radius: 20px;
   width: 60px;
   align-items: center;
@@ -155,7 +155,7 @@ export const ModalYesButton = styled.TouchableOpacity`
 export const ModalNoButton = styled.TouchableOpacity`
   height: 40px;
   background-color: ${colors.red};
-  padding: 10px;
+  padding: 0 10px 0 10px;
   border-radius: 20px;
   width: 60px;
   align-items: center;
