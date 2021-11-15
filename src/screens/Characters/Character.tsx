@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Alert, FlatList, TouchableOpacity, View,
 } from 'react-native';
+import { useMediaQuery } from 'react-responsive';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,11 +49,22 @@ import {
   EditBoxContainer,
   EditBoxText,
   MarginView,
+  ModalYellowButton,
+  ButtonsContainer,
+  Row,
+  Button,
+  ButtonText,
+  BackButton,
+  GridContainer,
+  ExpressionPreview,
+  ExpressionPreviewContainer,
 } from './styles';
 
 interface IRouteParams {
   character: ICharacter;
 }
+
+const ExpressionMaxSize = 25;
 
 const Character: React.FC = () => {
   const route = useRoute();
@@ -68,12 +80,19 @@ const Character: React.FC = () => {
   const [selectedRoll, setSelectedRoll] = useState<ICharacterRoll>({} as ICharacterRoll);
   const [isRollDeletionModalOpen, setIsRollDeletionModalOpen] = useState(false);
   const [isEditRollModalOpen, setIsEditRollModalOpen] = useState(false);
+  const [isSelectExpressionModalOpen, setIsSelectExpressionModalOpen] = useState(false);
   const [newRoll, setNewRoll] = useState<ICharacterRoll>({ name: '', expression: '' });
   const [rollResults, setRollResults] = useState<number[]>([]);
   const [isMaxValue, setIsMaxValue] = useState<boolean[]>([]);
   const [isMinValue, setIsMinValue] = useState<boolean[]>([]);
+  const [editableExpression, setEditableExpression] = useState('');
+  const [editableExpressionToShow, setEditableExpressionToShow] = useState('');
 
   const navigation = useNavigation();
+
+  const isSmallDevice = useMediaQuery({
+    maxDeviceHeight: 700,
+  });
 
   const handleAddRoll = async () => {
     if (!isDiceExpressionValid(newRoll.expression)) {
@@ -101,6 +120,11 @@ const Character: React.FC = () => {
 
     setCurrentCharacter(updatedCharacter);
     setIsAddRollModalOpen(false);
+
+    setEditableExpression('');
+    setEditableExpressionToShow('');
+
+    setNewRoll({ name: '', expression: '' });
   };
 
   const handleEditCharacterName = async () => {
@@ -220,6 +244,26 @@ const Character: React.FC = () => {
     setSelectedRoll({} as ICharacterRoll);
     setNewRoll({ name: '', expression: '' });
     setIsEditRollModalOpen(false);
+
+    setEditableExpression('');
+    setEditableExpressionToShow('');
+  };
+
+  const updateExpressions = (newCharacter: string) => {
+    if (editableExpression.length < ExpressionMaxSize) {
+      const newExpression = editableExpression + newCharacter;
+      setEditableExpression(newExpression);
+      setEditableExpressionToShow(newExpression.replace(/\//g, '÷').replace(/\*/g, 'x'));
+    }
+  };
+
+  const eraseLastExpressionCharacter = () => {
+    if (editableExpression === '') return;
+
+    const newExpression = editableExpression.slice(0, -1);
+
+    setEditableExpression(newExpression);
+    setEditableExpressionToShow(newExpression.replace(/\//g, '÷').replace(/\*/g, 'x'));
   };
 
   const renderRoll = ({ item: roll, index }: { item: ICharacterRoll, index: number}) => (
@@ -280,6 +324,8 @@ const Character: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setNewRoll({ name: '', expression: '' });
+                setEditableExpression('');
+                setEditableExpressionToShow('');
                 setIsAddRollModalOpen(false);
               }}
             >
@@ -292,22 +338,116 @@ const Character: React.FC = () => {
             placeholder="Roll name"
             autoCapitalize="none"
             autoCompleteType="off"
+            defaultValue={newRoll.name}
             autoCorrect={false}
           />
-          <ModalText>Insert new roll expression:</ModalText>
-          <ModalText>(example: 2d8+5)</ModalText>
-          <ModalInput
-            onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
-            placeholder="Roll expression"
-            autoCapitalize="none"
-            autoCompleteType="off"
-            autoCorrect={false}
-          />
+          <ModalText>Press to select roll expression:</ModalText>
+          <MarginView />
+          <ModalYellowButton onPress={() => setIsSelectExpressionModalOpen(true)}>
+            <ModalButtonText>{editableExpressionToShow || 'Select expression'}</ModalButtonText>
+          </ModalYellowButton>
+          <MarginView />
           <ModalButton onPress={handleAddRoll}>
             <ModalButtonText>Add Roll</ModalButtonText>
           </ModalButton>
         </ModalContainer>
       </StyledKeyboardAvoidingView>
+    </Backdrop>
+  );
+
+  const renderSelectExpressionModal = () => (
+    <Backdrop>
+      <ModalContainer>
+        <ModalText>Select expression:</ModalText>
+        <ExpressionPreviewContainer>
+          <ExpressionPreview>{editableExpressionToShow}</ExpressionPreview>
+        </ExpressionPreviewContainer>
+        <ButtonsContainer small={isSmallDevice}>
+          <Row small={isSmallDevice}>
+            <Button onPress={() => { updateExpressions('1'); }}>
+              <ButtonText>1</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('2'); }}>
+              <ButtonText>2</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('3'); }}>
+              <ButtonText>3</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('-'); }} disabled={!isDiceExpressionValid(`${editableExpression}-1`)}>
+              <ButtonText>-</ButtonText>
+            </Button>
+          </Row>
+          <Row small={isSmallDevice}>
+            <Button onPress={() => { updateExpressions('4'); }}>
+              <ButtonText>4</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('5'); }}>
+              <ButtonText>5</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('6'); }}>
+              <ButtonText>6</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('+'); }} disabled={!isDiceExpressionValid(`${editableExpression}+1`)}>
+              <ButtonText>+</ButtonText>
+            </Button>
+          </Row>
+          <Row small={isSmallDevice}>
+            <Button onPress={() => { updateExpressions('7'); }}>
+              <ButtonText>7</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('8'); }}>
+              <ButtonText>8</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('9'); }}>
+              <ButtonText>9</ButtonText>
+            </Button>
+            <Button onPress={() => { updateExpressions('d'); }} disabled={!isDiceExpressionValid(`${editableExpression}d1`)}>
+              <ButtonText>d</ButtonText>
+            </Button>
+          </Row>
+          <Row small={isSmallDevice}>
+            <GridContainer>
+              <Button onPress={() => { updateExpressions('0'); }} disabled={!isDiceExpressionValid(`${editableExpression}0`)}>
+                <ButtonText>0</ButtonText>
+              </Button>
+            </GridContainer>
+            <GridContainer>
+              <Button onPress={() => { updateExpressions('*'); }} disabled={!isDiceExpressionValid(`${editableExpression}*1`)}>
+                <ButtonText>x</ButtonText>
+              </Button>
+            </GridContainer>
+            <GridContainer>
+              <BackButton onPress={eraseLastExpressionCharacter}>
+                <MaterialCommunityIcons size={20} name="arrow-left-thick" color={colors.white} />
+              </BackButton>
+            </GridContainer>
+          </Row>
+        </ButtonsContainer>
+        <ModalDoubleButtonsContainer>
+          <ModalYesButton
+            disabled={!isDiceExpressionValid(editableExpression)}
+            onPress={() => {
+              setNewRoll({ ...newRoll, expression: editableExpression });
+              setSelectedRoll({ ...selectedRoll, expression: editableExpression });
+              setIsSelectExpressionModalOpen(false);
+            }}
+          >
+            <ModalButtonText>
+              Confirm
+            </ModalButtonText>
+          </ModalYesButton>
+          <ModalNoButton onPress={() => {
+            setIsSelectExpressionModalOpen(false);
+            setEditableExpression(newRoll.expression);
+            setEditableExpressionToShow(newRoll.expression.replace(/\//g, '÷').replace(/\*/g, 'x'));
+          }}
+          >
+            <ModalButtonText>
+              Cancel
+            </ModalButtonText>
+          </ModalNoButton>
+        </ModalDoubleButtonsContainer>
+      </ModalContainer>
     </Backdrop>
   );
 
@@ -335,15 +475,17 @@ const Character: React.FC = () => {
             defaultValue={selectedRoll.name}
             autoCorrect={false}
           />
-          <ModalText>Insert new roll expression:</ModalText>
-          <ModalInput
-            onChangeText={(value) => setNewRoll({ ...newRoll, expression: value })}
-            placeholder="Roll expression"
-            autoCapitalize="none"
-            autoCompleteType="off"
-            defaultValue={selectedRoll.expression}
-            autoCorrect={false}
-          />
+          <ModalText>Press to select roll expression:</ModalText>
+          <MarginView />
+          <ModalYellowButton onPress={() => {
+            setEditableExpressionToShow(selectedRoll.expression.replace(/\//g, '÷').replace(/\*/g, 'x'));
+            setEditableExpression(selectedRoll.expression);
+            setIsSelectExpressionModalOpen(true);
+          }}
+          >
+            <ModalButtonText>{selectedRoll.expression || 'Select expression'}</ModalButtonText>
+          </ModalYellowButton>
+          <MarginView />
           <ModalButton onPress={handleEditRoll}>
             <ModalButtonText>Save roll</ModalButtonText>
           </ModalButton>
@@ -512,6 +654,10 @@ const Character: React.FC = () => {
   );
 
   const renderModal = () => {
+    if (isSelectExpressionModalOpen) {
+      return renderSelectExpressionModal();
+    }
+
     if (isAddRollModalOpen) {
       return renderAddRollModal();
     }

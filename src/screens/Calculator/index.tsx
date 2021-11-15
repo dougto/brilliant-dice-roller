@@ -47,7 +47,7 @@ const Calculator: React.FC = () => {
     const newExpression = expression.slice(0, -1);
 
     setExpression(newExpression);
-    setExpressionToShow(newExpression);
+    setExpressionToShow(newExpression.replace(/\//g, '÷').replace(/\*/g, 'x'));
   };
 
   const clearExpression = () => {

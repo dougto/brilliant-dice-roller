@@ -1,6 +1,14 @@
 import styled from 'styled-components/native';
 import colors from '../../constants/Colors';
 
+interface IButtonContainerProps {
+  small: boolean;
+}
+
+interface IRowProps {
+  small: boolean;
+}
+
 interface RollResultTextProps {
   isMax: boolean;
   isMin: boolean;
@@ -108,6 +116,17 @@ export const ModalInput = styled.TextInput`
 
 export const ModalButton = styled.TouchableOpacity`
   background-color: ${colors.blue};
+  border-radius: 8px;
+  padding: 8px;
+  height: 40px;
+  width: 60%;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ModalYellowButton = styled.TouchableOpacity`
+  background-color: ${colors.orange};
   border-radius: 8px;
   padding: 8px;
   height: 40px;
@@ -274,6 +293,7 @@ export const ModalYesButton = styled.TouchableOpacity`
   min-width: 60px;
   align-items: center;
   justify-content: center;
+  opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
 `;
 
 export const ModalNoButton = styled.TouchableOpacity`
@@ -312,4 +332,61 @@ export const EditBoxText = styled.Text`
 
 export const MarginView = styled.View`
   height: 30px;
+`;
+
+export const ButtonsContainer = styled.View<IButtonContainerProps>`
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: ${(props) => (props.small ? 12 : 24)}px;
+`;
+
+export const Row = styled.View<IRowProps>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  min-height: 40px;
+  margin: ${(props) => (props.small ? 8 : 16)}px;
+`;
+
+export const Button = styled.TouchableOpacity`
+  background-color: ${colors.grey};
+  border-radius: 4px;
+  min-width: 44px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
+`;
+
+export const ButtonText = styled.Text`
+  font-size: 24px;
+  color: ${colors.white};
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  background-color: ${colors.orange};
+  border-radius: 4px;
+  min-width: 44px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const GridContainer = styled.View`
+  flex: 0.25;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ExpressionPreviewContainer = styled.View`
+  margin-top: 10px;
+  height: 30px;
+`;
+
+export const ExpressionPreview = styled.Text`
+  font-size: 25px;
+  color: ${colors.grey}
 `;
