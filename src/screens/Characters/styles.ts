@@ -381,7 +381,7 @@ export const GridContainer = styled.View`
 
 export const ExpressionPreviewContainer = styled.View`
   margin-top: 10px;
-  height: 30px;
+  height: 36px;
 `;
 
 export const ExpressionPreview = styled.Text`
